@@ -1,0 +1,39 @@
+{
+  "files": {
+    "main.css": "./static/css/main.51da6a08.css",
+    "main.js": "./static/js/main.c0b34a50.js",
+    "static/js/453.0fcd3c23.chunk.js": "./static/js/453.0fcd3c23.chunk.js",
+    "static/media/fa-solid-900.ttf": "./static/media/fa-solid-900.45a265d0f07b31cde85f.ttf",
+    "static/media/fa-brands-400.ttf": "./static/media/fa-brands-400.6205fd00fb1b573e9f0f.ttf",
+    "static/media/fa-solid-900.woff2": "./static/media/fa-solid-900.fb8184add5a3101ad0a3.woff2",
+    "static/media/fa-brands-400.woff2": "./static/media/fa-brands-400.8d3cabfc66809162fb4d.woff2",
+    "static/media/cera-round-pro-bold.woff": "./static/media/cera-round-pro-bold.9552dc1ac643104b4bb3.woff",
+    "static/media/cera-round-pro-medium.woff": "./static/media/cera-round-pro-medium.23ac167aebdb8180ccf6.woff",
+    "static/media/cera-round-pro-regular.woff": "./static/media/cera-round-pro-regular.63d9984820a5a58e6b52.woff",
+    "static/media/cera-round-pro-black.woff": "./static/media/cera-round-pro-black.5266502f213e7f530d6e.woff",
+    "static/media/cera-round-pro-light.woff": "./static/media/cera-round-pro-light.c9f3cf875a7b048da1d9.woff",
+    "static/media/cera-round-pro-thin.woff": "./static/media/cera-round-pro-thin.55a58c28bbc6e4272d9a.woff",
+    "static/media/fa-regular-400.ttf": "./static/media/fa-regular-400.adc51aab4d771ab65f81.ttf",
+    "static/media/open-sans-regular.woff": "./static/media/open-sans-regular.362b56e7c69551249027.woff",
+    "static/media/open-sans-bold.woff": "./static/media/open-sans-bold.08328bf7467540700abe.woff",
+    "static/media/cera-round-pro-bold.woff2": "./static/media/cera-round-pro-bold.12d090968fe85af321e5.woff2",
+    "static/media/cera-round-pro-medium.woff2": "./static/media/cera-round-pro-medium.91a667fa189e40a0e917.woff2",
+    "static/media/cera-round-pro-regular.woff2": "./static/media/cera-round-pro-regular.fb99c33c2a427e392bbe.woff2",
+    "static/media/cera-round-pro-light.woff2": "./static/media/cera-round-pro-light.a7c19045528ba01fe891.woff2",
+    "static/media/cera-round-pro-black.woff2": "./static/media/cera-round-pro-black.4c1a1710a2085e09a07f.woff2",
+    "static/media/cera-round-pro-thin.woff2": "./static/media/cera-round-pro-thin.c905b7a1003e39baa5b5.woff2",
+    "static/media/open-sans-regular.woff2": "./static/media/open-sans-regular.304ef3ce13b661940dba.woff2",
+    "static/media/open-sans-bold.woff2": "./static/media/open-sans-bold.118f1851b6bbbed320de.woff2",
+    "static/media/fa-regular-400.woff2": "./static/media/fa-regular-400.e931bc0d14f5bbb1da22.woff2",
+    "static/media/fa-v4compatibility.ttf": "./static/media/fa-v4compatibility.2eb7b3ef25042305f3ff.ttf",
+    "static/media/fa-v4compatibility.woff2": "./static/media/fa-v4compatibility.b3049b13a93f07e026fc.woff2",
+    "index.html": "./index.html",
+    "main.51da6a08.css.map": "./static/css/main.51da6a08.css.map",
+    "main.c0b34a50.js.map": "./static/js/main.c0b34a50.js.map",
+    "453.0fcd3c23.chunk.js.map": "./static/js/453.0fcd3c23.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.51da6a08.css",
+    "static/js/main.c0b34a50.js"
+  ]
+}
