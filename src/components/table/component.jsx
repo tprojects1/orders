@@ -17,22 +17,23 @@ const Table = ({ data,
   isSortable
 }) => {
 
+  const [allData, setAllData] = useState([...data]);
   const [sortedData, setSortedData] = useState(data);
   const [sortField, setSortField] = useState(defaultSortColumn || null); // Track currently sorted field
   const [sortOrder, setSortOrder] = useState(defaultSortOrder || 'descending'); // Initial sort order (descending on load)
   const sortColumn = (column) => {
-    const newData = [...sortedData]; // Create a copy to avoid mutating original data
+    const sortedAllData = [...allData].sort((a, b) => {
 
-    if (column === sortField) {
-      // Toggle sort order on the same field
-      setSortOrder(sortOrder === 'ascending' ? 'descending' : 'ascending');
-    } else {
-      // Sort by the new field
-      setSortField(column);
-      setSortOrder('ascending'); // Reset sort order for new field
-    }
+      if (column === sortField) {
+        // Toggle sort order on the same field
+        setSortOrder(sortOrder === 'ascending' ? 'descending' : 'ascending');
+      } else {
+        // Sort by the new field
+        setSortField(column);
+        setSortOrder('ascending'); // Reset sort order for new field
+      }
 
-    newData.sort((a, b) => {
+      // newData.sort((a, b) => {
       const valueA = a[column];
       const valueB = b[column];
 
@@ -43,9 +44,11 @@ const Table = ({ data,
       } else {
         return sortOrder === 'ascending' ? valueA - valueB : valueB - valueA; // Numeric comparison
       }
+      // });
+
     });
-    
-    setSortedData(newData);
+
+    setAllData(sortedAllData);
   };
 
   useEffect(() => {
@@ -197,7 +200,7 @@ const Table = ({ data,
             </tr>
           </thead>
           <tbody>
-            {(isSortable ? sortedData : data).map(row => (
+            {(isSortable ? allData : data).map(row => (
               <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
                 {columns.map((column) => (
                   <td key={column}>
@@ -218,8 +221,12 @@ const Table = ({ data,
             setSelectedRow={setSelectedRow}
             uniqueStatuses={uniqueStatuses}
             onClose={() => closePanel()}
-            onSave={(updatedRow) => {
-              handleTableDataUpdate(updatedRow);
+            onSave={(updatedData) => {
+              setAllData((prevData) =>
+                prevData.map((row) =>
+                  row.id === updatedData.id ? updatedData : row
+                )
+              );
             }}
           />
         ) : ''}
