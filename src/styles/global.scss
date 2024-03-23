@@ -1,0 +1,89 @@
+@import 'variables';
+@import 'mixins';
+@import 'fonts';
+@import 'font-awesome';
+@import 'headings';
+@import 'forms';
+
+* {
+    box-sizing: border-box;
+    font: 1rem 'cera round pro regular';
+    margin: 0 auto;
+    padding: 0;
+    transition: .4s all ease-out;
+    width: 100%;
+
+    +* {
+        margin-top: 1rem;
+    }
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    margin: 0;
+    // position: relative;
+    text-align: left;
+    /* z-index: 0;
+    @include breakpoint(medium) {
+        z-index: 1;
+    }
+    @include breakpoint(large) {
+        z-index: 2;
+    }*/
+}
+
+#root {
+    margin: 0;    
+    z-index: 0;
+    @include breakpoint(medium) {
+        z-index: 1;
+    }
+    @include breakpoint(large) {
+        z-index: 2;
+    }
+    &.isLoaded {
+        position: relative;
+    }
+}
+
+:focus {
+    box-shadow: 0 0 10px map-get($colors, "primary");
+    // outline-color: map-get($colors, "primary");   
+    outline: none;
+}
+
+section {
+    background: #fff;
+    max-width: 1024px;
+    padding: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.overlay {
+    background: #fff;
+    height: 100%;
+    left: 0;
+    margin: 0;
+    opacity: .6;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+
+    &.hidden {
+        z-index: -1;
+    }
+}
+
+.hidden {
+    opacity: 0;
+    transition: none;
+}
+
+.faded {
+    opacity: .3;
+}

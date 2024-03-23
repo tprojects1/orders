@@ -1,0 +1,215 @@
+import React, { useEffect, useRef, useState } from 'react';
+// import parse from 'date-fns/parse';
+import { formattedString } from '../../common';
+import './styles.scss';
+import { DataPanel, Tag } from '..';
+import useDeepCompare from '../../hooks/useDeepCompare';
+
+const Table = ({ data,
+  columns,
+  initialSortColumn,
+  initialSortDirection,
+  handleTableDataUpdate,
+  setSelectedRow,
+  selectedRow,
+  uniqueStatuses,
+  isEditable
+}) => {
+  const [sortedData, setSortedData] = useState(data),
+    [sortField, setSortField] = useState(initialSortColumn || null),
+    [sortOrder, setSortOrder] = useState(initialSortDirection || 'asc'),
+    prevData = useDeepCompare(data, sortedData); // Track the data changes    
+
+  useEffect(() => {
+    if (prevData) { // Re-render only when data changes deeply
+      setSortedData(data);
+    }
+  }, [data, prevData]);
+
+  // UseEffect to handle initial sorting
+  useEffect(() => {
+    if (initialSortColumn && data) {
+      const sortedData = [...data].sort((a, b) => {
+        // Adjust comparison for dates
+        const dateA = new Date(a[initialSortColumn]);
+        const dateB = new Date(b[initialSortColumn]);
+        return initialSortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+      });
+      setSortedData(sortedData);
+    }
+  }, [data, initialSortColumn, initialSortDirection, sortField]);
+
+  /*const handleSort = (field) => {
+    console.log('b4 sort', sortedData)
+    // Determine new sort order
+    const newSortOrder = sortField === field ? (sortOrder === 'asc' ? 'desc' : 'asc') : (sortField === null ? 'desc' : 'asc');
+  
+    // Use spread syntax to create a new sorted array
+    setSortedData([...sortedData].sort((a, b) => {
+      // Adjust for mixed-type comparisons
+      const aValue = typeof a[field] === 'string' ? a[field].toLowerCase() : a[field];
+      const bValue = typeof b[field] === 'string' ? b[field].toLowerCase() : b[field];
+  
+      if (newSortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    }));
+  
+    setSortField(field);
+    setSortOrder(newSortOrder);
+
+    console.log('after sort', sortedData)
+  };*/
+
+
+  const handleSort = (field) => {
+    // Determine new sort order
+    const newSortOrder = sortField === field ? (sortOrder === 'asc' ? 'desc' : 'asc') : (sortField === null ? 'desc' : 'asc');
+  
+    // Use spread syntax to create a new sorted array
+    setSortedData([...sortedData].sort((a, b) => {
+      // Handle potential data type differences (e.g., dates)
+      const aValue = typeof a[field] === 'string' ? a[field].toLowerCase() : a[field];
+      const bValue = typeof b[field] === 'string' ? b[field].toLowerCase() : a[field];  // Consider converting all to a consistent type if needed
+  
+      if (newSortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    }));
+  
+    setSortField(field);
+    setSortOrder(newSortOrder);
+  };
+  
+  
+  let columnHeaderRef = useRef(null);
+
+  useEffect(() => {
+    console.log(columnHeaderRef)
+    if (columnHeaderRef.current) columnHeaderRef.current.click();        
+    window.addEventListener('resize', function () {
+      resizeTheTable();
+    });
+    // resizeTheTable
+  }, []);
+
+  const formattedColumns = columns.map((column) => ( // sort function with the default sorting set to the date column in descending order
+    <th key={column}>
+      <button onClick={() => handleSort(column)} ref={column === 'date' ? columnHeaderRef : null}>
+        {formattedString(column).replace('Id', 'ID')} {sortField === column && sortOrder === 'asc' ? '▲' : sortField === column && sortOrder === 'desc' ? '▼' : ''}
+      </button>
+    </th>
+  ));
+
+  function resizeTheTable() {
+    setTimeout(() => {
+      const table = document.querySelector('table'),
+        dataPanel = document.querySelector('.data-panel');
+      if (dataPanel) {
+        table.style.width = 'calc(100% - ' + dataPanel.offsetWidth + 'px)';
+        setTimeout(() => {
+          dataPanel.classList.remove('hidden');
+        }, 400);
+      }
+      else {
+        table.style.width = '100%';
+      }
+    });
+  }
+
+  const handleRowClick = (row, id) => {
+
+    if (document.querySelector('[data-id="' + id + '"]').className.includes('selected')) closePanel() // close the panel if the currently selected row is clicked
+
+    else {
+
+      deselectTheRow();
+
+      document.querySelector('[data-id="' + id + '"]').classList.add('selected');
+
+      setSelectedRow(row);
+      setTimeout(() => {
+        try {
+          
+          const inputElement = document.querySelector('.data-panel').querySelector('[type="text"]');
+          let currentValue = inputElement.value;
+
+          currentValue += " ";
+          currentValue = currentValue.slice(0, -1);
+          inputElement.value = currentValue;
+          /*inputElement.focus();
+          inputElement.blur();*/
+          // console.log(inputElement)
+
+        } catch (e) {
+
+        }
+      });
+
+    }
+
+    resizeTheTable();
+
+  };
+
+  function deselectTheRow() {
+    document.querySelectorAll('[data-id]').forEach(row => {
+      row.classList.remove('selected');
+    });
+  }
+
+  function closePanel() {
+    setSelectedRow(null);
+    deselectTheRow();
+    resizeTheTable();
+  }
+
+  return (
+    <>
+      <div className={`table ${isEditable ? 'editable' : ''}`}>
+        <table key={data.length}>
+          <thead>
+            <tr>
+              {formattedColumns}
+            </tr>
+          </thead>
+          <tbody>
+            {sortedData.map(row => (
+              <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
+                {columns.map((column) => (
+                  <td key={column}>
+                    {column === 'status' ? (
+                      <Tag text={row[column]} />
+                    ) : (
+                      row[column]
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+
+        </table>
+        {isEditable ? (
+          <DataPanel
+            selectedRow={selectedRow}
+            setSelectedRow={setSelectedRow}
+            uniqueStatuses={uniqueStatuses}
+            onClose={() => closePanel()} // Reset selected row on cancel
+            onSave={(updatedRow) => {
+              // 1. Update data in parent component (Orders.jsx)
+              //    - Pass the updated row to a function in Orders.jsx
+              handleTableDataUpdate(updatedRow);              
+            }}
+          />
+        ) : ''}
+      </div>
+    </>
+  );
+};
+
+export default Table;
