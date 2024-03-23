@@ -9,7 +9,8 @@ const Orders = () => {
     [isVisible, setIsVisible] = useState(false),
     [selectedRow, setSelectedRow] = useState(null),
     [uniqueStatuses, setUniqueStatuses] = useState([]),
-    isEditable = true;
+    isEditable = true,
+    isSortable = true;
 
   const handleTableDataUpdate = (updatedRow) => {
     // Create a new object with updated values
@@ -61,6 +62,8 @@ const Orders = () => {
               setSelectedRow={setSelectedRow}
               selectedRow={selectedRow}
               isEditable={isEditable}
+              isSortable={isSortable}
+              defaultSortColumn={'date'}              
               columns={
                 [
                   'id',
