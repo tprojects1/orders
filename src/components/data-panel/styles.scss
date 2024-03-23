@@ -1,0 +1,63 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
+.data-panel {
+    background: #fff;
+    box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.3);
+    border-top-right-radius: .5rem;
+    border-top-left-radius: .5rem;
+    left: 1rem;
+    margin-top: 0;
+    padding: 1rem;
+    position: fixed;
+    top: 66px;
+    width: calc(100% - 2rem);
+    z-index: 101;
+
+    @include breakpoint(medium) {
+        box-shadow: none;
+        left: 0;
+        max-width: 320px;
+        padding: 0 1rem 0 0;
+        position: sticky;
+        top: 0;
+        width: auto;
+    }
+
+    &.hidden {
+        position: absolute;
+    }
+
+    button {
+        margin-left: 0;
+        margin-right: 0;
+        * {
+            left: -.75rem;
+        }
+        @include breakpoint("extra large") {
+            * {
+                left: -1rem;
+            }
+        }
+    }
+
+    form {
+        * {
+            font-size: .75rem;
+        }
+
+        div {
+            margin-top: .5rem;
+        }
+
+        textarea {
+            height: 72px;
+        }
+
+        @include breakpoint("extra large") {
+            * {
+                font-size: inherit;
+            }
+        }
+    }
+}

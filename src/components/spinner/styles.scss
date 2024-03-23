@@ -1,0 +1,41 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
+.spinner {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    div {
+        animation: spin 1s linear infinite;
+        // border: 4px solid map-get($colors, "neutral");
+        border: 4px solid transparent;
+        border-radius: 50%;
+        border-left-color: map-get($colors, "primary");
+        border-top-color: map-get($colors, "primary");
+        height: 48px;        
+        width: 48px;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    30% {
+        transform: rotate(180deg);
+    }
+
+    /* Fast spin */
+    70% {
+        transform: rotate(270deg);
+    }
+
+    /* Slow down */
+    100% {
+        transform: rotate(360deg);
+    }
+}

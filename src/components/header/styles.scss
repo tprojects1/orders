@@ -1,0 +1,22 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
+header {
+    background: map-get($colors, "primary");     
+    color: #fff;  
+    height: 52px;    
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    > div {
+        max-width: 1024px;
+        padding: .5rem 1.5rem;
+    }
+    ~ section {
+        padding-top: 0;
+    }
+}
+
+* + header {
+    margin-top: 0;
+}

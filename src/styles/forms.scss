@@ -1,0 +1,32 @@
+input,
+textarea {
+    border: 1px solid map-get($colors, "neutral");
+    border-radius: .25rem;
+    padding: .25rem;
+
+    &:hover {
+        border-color: map-get($colors, "primary");
+    }
+}
+
+label {
+    font-family: 'cera round pro medium';
+
+    +input,
+    +select,
+    +textarea {
+        margin-top: .25rem;
+    }
+}
+
+textarea {
+    resize: none;
+}
+
+input,
+textarea,
+select {
+    +* {
+        margin-top: .25rem;
+    }
+}

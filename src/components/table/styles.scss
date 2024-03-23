@@ -1,0 +1,102 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
+.table {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: calc(100vh - 80px); 
+    overflow: auto;        
+    // margin-top: 1rem;
+    margin-top: -.25rem;
+    width: 100%;
+
+    @include breakpoint(medium) {
+        flex-direction: row;
+    }
+
+    &.editable {
+        tbody {
+            tr {   
+                border-top: 1px solid map-get($colors, "neutral");   
+                &:first-child {
+                    border-color: transparent;
+                }          
+                &:hover {
+                    background: lighten(map-get($colors, "primary"), 35%);
+                    color: darken(map-get($colors, "primary"), 10%);                    
+                    transition: .4s background-color ease-in-out;
+                }
+                &.selected {
+                    background: darken(map-get($colors, "primary"), 10%); 
+                    // transition: none;
+                    * {
+                        color: #fff;
+                        transition: none;
+                    }
+                }                
+            }
+        }
+
+        td {
+            cursor: pointer;
+        }
+    }
+
+    table {
+        border-collapse: collapse;   
+        margin: 0 1rem 0 0;                         
+    }
+
+    thead {
+        background: #fff;                
+        position: sticky;
+        top: 0;      
+        z-index: 1;
+        &:before {
+            background: #fff;
+            bottom: 0;
+            content: '';
+            height: 1rem;
+            width: calc(100% + 1rem);
+            position: absolute;
+            z-index: 1;
+        } 
+        &:after {
+            box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.08); 
+            bottom: 0;
+            content: '';
+            height: 1rem;
+            width: calc(100% - .5rem);
+            position: absolute;
+        }
+    }
+
+    th,
+    td {
+        max-width: 100px;
+        padding: .5rem;
+        width: auto;
+        word-wrap: break-word;
+    }
+
+    th {        
+        font-family: 'cera round pro bold';
+        position: relative;
+        z-index: 1;
+        padding: 0 .5rem .75rem .5rem;
+        button {
+            background: none;
+            border: none;            
+            color: darken(map-get($colors, "primary"), 20%);
+            cursor: pointer;    
+            margin: 0;        
+            text-align: left;
+            padding: 0;
+        }
+    }
+    .tag {
+        position: relative;
+        top: -2px;
+    }
+}
