@@ -7,31 +7,83 @@ import { DataPanel, Tag } from '..';
 
 const Table = ({ data,
   columns,
+  defaultSortColumn,
+  defaultSortOrder,
   handleTableDataUpdate,
   setSelectedRow,
   selectedRow,
   uniqueStatuses,
-  isEditable
+  isEditable,
+  isSortable
 }) => {
 
+  const [sortedData, setSortedData] = useState(data);
+  const [sortField, setSortField] = useState(defaultSortColumn || null); // Track currently sorted field
+  const [sortOrder, setSortOrder] = useState(defaultSortOrder || 'descending'); // Initial sort order (descending on load)
+  const sortColumn = (column) => {
+    const newData = [...sortedData]; // Create a copy to avoid mutating original data
+
+    if (column === sortField) {
+      // Toggle sort order on the same field
+      setSortOrder(sortOrder === 'ascending' ? 'descending' : 'ascending');
+    } else {
+      // Sort by the new field
+      setSortField(column);
+      setSortOrder('ascending'); // Reset sort order for new field
+    }
+
+    newData.sort((a, b) => {
+      const valueA = a[column];
+      const valueB = b[column];
+
+      if (typeof valueA === 'string') {
+        return sortOrder === 'ascending'
+          ? valueA.localeCompare(valueB)
+          : valueB.localeCompare(valueA); // Locale-aware string comparison
+      } else {
+        return sortOrder === 'ascending' ? valueA - valueB : valueB - valueA; // Numeric comparison
+      }
+    });
+    
+    setSortedData(newData);
+  };
+
   useEffect(() => {
+    if (defaultSortColumn) {
+      sortColumn(defaultSortColumn);
+    }
     window.addEventListener('resize', function () {
       resizeTheTable();
     });
   }, []);
 
+  const getColumnName = function (column) {
+    return formattedString(column).replace('Id', 'ID');
+  };
+
   const formattedColumns = columns.map((column) => (
-    <th key={column}>
-      {formattedString(column).replace('Id', 'ID')}
+    <th
+      key={column}
+      className={`table-header ${sortField === column ? (sortOrder === 'ascending' ? 'descending' : 'ascending') : ''}`}
+      onClick={() => sortColumn(column)}
+    >
+      {isSortable ? (
+        <>
+          <span>{getColumnName(column)}</span>
+          <i />
+        </>
+      ) : (
+        getColumnName(column)
+      )}
     </th>
   ));
 
-  function resizeTheTable() {    
+  function resizeTheTable() {
     setTimeout(() => {
       // console.log(getTheCurrentBreakpoint());
       const table = document.querySelector('table'),
         dataPanel = document.querySelector('.data-panel'),
-        showTheDataPanel = function () {          
+        showTheDataPanel = function () {
           // if (getTheCurrentBreakpoint() == 'small') document.querySelector('.overlay').classList.remove('hidden');
           if (getTheCurrentBreakpoint() == 'small') document.querySelector('table').classList.add('faded');
           setTimeout(() => {
@@ -39,7 +91,7 @@ const Table = ({ data,
           }, 400);
         }
 
-      if (getTheCurrentBreakpoint() == 'small') {        
+      if (getTheCurrentBreakpoint() == 'small') {
         table.style.width = '100%'
         if (dataPanel) showTheDataPanel();
         // else document.querySelector('.overlay').classList.add('hidden');
@@ -71,8 +123,8 @@ const Table = ({ data,
       setTimeout(() => {
         try {
 
-          const inputElement = document.querySelector('.data-panel').querySelector('[type="text"]');
-          
+          // const inputElement = document.querySelector('.data-panel').querySelector('[type="text"]');
+
           /*let currentValue = inputElement.value;
 
           currentValue += " ";
@@ -110,7 +162,7 @@ const Table = ({ data,
 
 
 
-          
+
 
         } catch (e) {
 
@@ -137,7 +189,7 @@ const Table = ({ data,
 
   return (
     <>
-      <div className={`table ${isEditable ? 'editable' : ''}`}>
+      <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''}`}>
         <table key={data.length}>
           <thead>
             <tr>
@@ -145,7 +197,7 @@ const Table = ({ data,
             </tr>
           </thead>
           <tbody>
-            {data.map(row => (
+            {(isSortable ? sortedData : data).map(row => (
               <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
                 {columns.map((column) => (
                   <td key={column}>
