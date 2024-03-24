@@ -9,7 +9,6 @@ const Table = ({ data,
   columns,
   defaultSortColumn,
   defaultSortOrder,
-  handleTableDataUpdate,
   setSelectedRow,
   selectedRow,
   uniqueStatuses,
@@ -17,39 +16,46 @@ const Table = ({ data,
   isSortable
 }) => {
 
-  const [allData, setAllData] = useState([...data]);
-  const [sortedData, setSortedData] = useState(data);
-  const [sortField, setSortField] = useState(defaultSortColumn || null); // Track currently sorted field
-  const [sortOrder, setSortOrder] = useState(defaultSortOrder || 'descending'); // Initial sort order (descending on load)
-  const sortColumn = (column) => {
-    const sortedAllData = [...allData].sort((a, b) => {
+  const [allData, setAllData] = useState([...data]),
+    [sortField, setSortField] = useState(defaultSortColumn || null), // Track currently sorted field
+    [sortOrder, setSortOrder] = useState(defaultSortOrder || 'descending'), // Initial sort order (descending on load)
+    [searchTerm, setSearchTerm] = useState(''),
+    handleSearchChange = (event) => {
+      setSearchTerm(event.target.value.toLowerCase());
+    },
+    filteredData = allData.filter((row) => {
+      // Implement search logic as needed
+      return Object.values(row).some((value) => value.toString().toLowerCase().includes(searchTerm));
+    }),
+    sortColumn = (column) => {
+      const sortedAllData = [...allData].sort((a, b) => {
 
-      if (column === sortField) {
-        // Toggle sort order on the same field
-        setSortOrder(sortOrder === 'ascending' ? 'descending' : 'ascending');
-      } else {
-        // Sort by the new field
-        setSortField(column);
-        setSortOrder('ascending'); // Reset sort order for new field
-      }
+        if (column === sortField) {
+          // Toggle sort order on the same field
+          setSortOrder(sortOrder === 'ascending' ? 'descending' : 'ascending');
+        } else {
+          // Sort by the new field
+          setSortField(column);
+          setSortOrder('ascending'); // Reset sort order for new field
+        }
 
-      // newData.sort((a, b) => {
-      const valueA = a[column];
-      const valueB = b[column];
+        // newData.sort((a, b) => {
+        const valueA = a[column];
+        const valueB = b[column];
 
-      if (typeof valueA === 'string') {
-        return sortOrder === 'ascending'
-          ? valueA.localeCompare(valueB)
-          : valueB.localeCompare(valueA); // Locale-aware string comparison
-      } else {
-        return sortOrder === 'ascending' ? valueA - valueB : valueB - valueA; // Numeric comparison
-      }
-      // });
+        if (typeof valueA === 'string') {
+          return sortOrder === 'ascending'
+            ? valueA.localeCompare(valueB)
+            : valueB.localeCompare(valueA); // Locale-aware string comparison
+        } else {
+          return sortOrder === 'ascending' ? valueA - valueB : valueB - valueA; // Numeric comparison
+        }
+        // });
 
-    });
+      });
 
-    setAllData(sortedAllData);
-  };
+      setAllData(sortedAllData);
+    };
 
   useEffect(() => {
     if (defaultSortColumn) {
@@ -193,43 +199,48 @@ const Table = ({ data,
   return (
     <>
       <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''}`}>
-        <table key={data.length}>
-          <thead>
-            <tr>
-              {formattedColumns}
-            </tr>
-          </thead>
-          <tbody>
-            {(isSortable ? allData : data).map(row => (
-              <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
-                {columns.map((column) => (
-                  <td key={column}>
-                    {column === 'status' ? (
-                      <Tag text={row[column]} />
-                    ) : (
-                      row[column]
-                    )}
-                  </td>
-                ))}
+        <div id="search">
+          <input type="text" placeholder="Search" onChange={handleSearchChange} />
+        </div>
+        <div id="table-container">
+          <table key={data.length}>
+            <thead>
+              <tr>
+                {formattedColumns}
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {isEditable ? (
-          <DataPanel
-            selectedRow={selectedRow}
-            setSelectedRow={setSelectedRow}
-            uniqueStatuses={uniqueStatuses}
-            onClose={() => closePanel()}
-            onSave={(updatedData) => {
-              setAllData((prevData) =>
-                prevData.map((row) =>
-                  row.id === updatedData.id ? updatedData : row
-                )
-              );
-            }}
-          />
-        ) : ''}
+            </thead>
+            <tbody>
+              {filteredData.map((row) => (
+                <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
+                  {columns.map((column) => (
+                    <td key={column}>
+                      {column === 'status' ? (
+                        <Tag text={row[column]} />
+                      ) : (
+                        row[column]
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {isEditable ? (
+            <DataPanel
+              selectedRow={selectedRow}
+              setSelectedRow={setSelectedRow}
+              uniqueStatuses={uniqueStatuses}
+              onClose={() => closePanel()}
+              onSave={(updatedData) => {
+                setAllData((prevData) =>
+                  prevData.map((row) =>
+                    row.id === updatedData.id ? updatedData : row
+                  )
+                );
+              }}
+            />
+          ) : ''}
+        </div>
       </div>
     </>
   );
