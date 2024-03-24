@@ -1,15 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // import parse from 'date-fns/parse';
 import { formattedString, getTheCurrentBreakpoint } from '../../common';
 import './styles.scss';
 import { DataPanel, Tag } from '..';
+import Fuse from 'fuse.js';
 // import useDeepCompare from '../../hooks/useDeepCompare';
 
 const Table = ({ data,
   columns,
   defaultSortColumn,
   defaultSortOrder,
-  handleTableDataUpdate,
   setSelectedRow,
   selectedRow,
   uniqueStatuses,
@@ -17,39 +17,77 @@ const Table = ({ data,
   isSortable
 }) => {
 
-  const [allData, setAllData] = useState([...data]);
-  const [sortedData, setSortedData] = useState(data);
-  const [sortField, setSortField] = useState(defaultSortColumn || null); // Track currently sorted field
-  const [sortOrder, setSortOrder] = useState(defaultSortOrder || 'descending'); // Initial sort order (descending on load)
-  const sortColumn = (column) => {
-    const sortedAllData = [...allData].sort((a, b) => {
+  const [allData, setAllData] = useState([...data]),
+    [sortField, setSortField] = useState(defaultSortColumn || null), // Track currently sorted field
+    [sortOrder, setSortOrder] = useState(defaultSortOrder || 'descending'), // Initial sort order (descending on load)
+    [searchTerm, setSearchTerm] = useState(''),
+    [showExactMatches, setShowExactMatches] = useState(false),
+    fuse = new Fuse(allData, {
+      keys: Object.keys(allData[0]), // Adjust keys if needed
+      threshold: 0.4, // Adjust for misspelling tolerance
+    }),
+    handleSearchChange = (event) => {
+      setSearchTerm(event.target.value.toLowerCase());
+    },
+    handleExactMatchToggle = (event) => {
+      setShowExactMatches(event.target.checked);
+    },
+    filterData = function (searchTerm, exactMatchOnly) {
 
-      if (column === sortField) {
-        // Toggle sort order on the same field
-        setSortOrder(sortOrder === 'ascending' ? 'descending' : 'ascending');
+      if (searchTerm === '') {
+        return allData; // Return all of the data if there isn't anything in the search
       } else {
-        // Sort by the new field
-        setSortField(column);
-        setSortOrder('ascending'); // Reset sort order for new field
+
+        const searchTermLower = searchTerm.toLowerCase();
+
+        return allData.filter((row) => {
+          if (exactMatchOnly) {
+            // Exact match logic (existing function)
+            return Object.values(row).some((value) =>
+              value.toString().toLowerCase().includes(searchTermLower)
+            );
+          } else {
+            // Fuzzy match using Fuse.js
+            const results = fuse.search(searchTermLower);
+            return results.map((result) => result.item).includes(row);
+          }
+        });
       }
+    },
+    clearSearch = () => {
+      setSearchTerm(''); // Reset the search term to clear the search results
+    };
 
-      // newData.sort((a, b) => {
-      const valueA = a[column];
-      const valueB = b[column];
+  const filteredData = filterData(searchTerm, showExactMatches),
+    sortColumn = (column) => {
+      const sortedAllData = [...allData].sort((a, b) => {
 
-      if (typeof valueA === 'string') {
-        return sortOrder === 'ascending'
-          ? valueA.localeCompare(valueB)
-          : valueB.localeCompare(valueA); // Locale-aware string comparison
-      } else {
-        return sortOrder === 'ascending' ? valueA - valueB : valueB - valueA; // Numeric comparison
-      }
-      // });
+        if (column === sortField) {
+          // Toggle sort order on the same field
+          setSortOrder(sortOrder === 'ascending' ? 'descending' : 'ascending');
+        } else {
+          // Sort by the new field
+          setSortField(column);
+          setSortOrder('ascending'); // Reset sort order for new field
+        }
 
-    });
+        // newData.sort((a, b) => {
+        const valueA = a[column];
+        const valueB = b[column];
 
-    setAllData(sortedAllData);
-  };
+        if (typeof valueA === 'string') {
+          return sortOrder === 'ascending'
+            ? valueA.localeCompare(valueB)
+            : valueB.localeCompare(valueA); // Locale-aware string comparison
+        } else {
+          return sortOrder === 'ascending' ? valueA - valueB : valueB - valueA; // Numeric comparison
+        }
+        // });
+
+      });
+
+      setAllData(sortedAllData);
+    };
 
   useEffect(() => {
     if (defaultSortColumn) {
@@ -193,43 +231,60 @@ const Table = ({ data,
   return (
     <>
       <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''}`}>
-        <table key={data.length}>
-          <thead>
-            <tr>
-              {formattedColumns}
-            </tr>
-          </thead>
-          <tbody>
-            {(isSortable ? allData : data).map(row => (
-              <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
-                {columns.map((column) => (
-                  <td key={column}>
-                    {column === 'status' ? (
-                      <Tag text={row[column]} />
-                    ) : (
-                      row[column]
-                    )}
-                  </td>
-                ))}
+        <div id="search">
+          <div>
+            <input type="search" placeholder="Search" value={searchTerm} onChange={handleSearchChange} />
+          </div>
+          <label htmlFor="toggle-exact-matches">
+            <input type="checkbox" id="toggle-exact-matches" checked={showExactMatches} onChange={handleExactMatchToggle} />
+            Show exact matches only
+          </label>
+        </div>
+        <div id="table-container">
+          <table key={data.length}>
+            <thead>
+              <tr>
+                {formattedColumns}
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {isEditable ? (
-          <DataPanel
-            selectedRow={selectedRow}
-            setSelectedRow={setSelectedRow}
-            uniqueStatuses={uniqueStatuses}
-            onClose={() => closePanel()}
-            onSave={(updatedData) => {
-              setAllData((prevData) =>
-                prevData.map((row) =>
-                  row.id === updatedData.id ? updatedData : row
-                )
-              );
-            }}
-          />
-        ) : ''}
+            </thead>
+            <tbody>
+              {/* Display no results message if filteredData is empty */}
+              {filteredData.length === 0 && searchTerm !== '' && (
+                <tr>
+                  <td colSpan={columns.length} className='no-results'><h4>No Results</h4><p>There aren't any results for the term <strong>{searchTerm}</strong>, but you can try another search term or <a href="#" onClick={clearSearch}>view all of the table entries</a>.</p></td>
+                </tr>
+              )}
+              {filteredData.map((row) => (
+                <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
+                  {columns.map((column) => (
+                    <td key={column}>
+                      {column === 'status' ? (
+                        <Tag text={row[column]} />
+                      ) : (
+                        row[column]
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {isEditable ? (
+            <DataPanel
+              selectedRow={selectedRow}
+              setSelectedRow={setSelectedRow}
+              uniqueStatuses={uniqueStatuses}
+              onClose={() => closePanel()}
+              onSave={(updatedData) => {
+                setAllData((prevData) =>
+                  prevData.map((row) =>
+                    row.id === updatedData.id ? updatedData : row
+                  )
+                );
+              }}
+            />
+          ) : ''}
+        </div>
       </div>
     </>
   );

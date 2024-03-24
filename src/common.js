@@ -1,5 +1,12 @@
 export function formattedString(str) {
-    return str.toLowerCase().replace(/\b\w/g, word => word.toUpperCase()).replace('_', ' ');
+    // Split the string on underscores while preserving word boundaries
+    const words = str.split(/_(?=\w)/);
+
+    // Convert the first letter of each word to uppercase
+    const titleCaseWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+
+    // Join the words with spaces
+    return titleCaseWords.join(' ');
 }
 
 export function getTheCurrentBreakpoint() {
@@ -10,7 +17,7 @@ export function getTheCurrentBreakpoint() {
             return 'large';
         default:
             return 'small';
-    }    
+    }
 }
 
 export function appendAnOverlayIfNecessary() {

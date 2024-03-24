@@ -63,6 +63,10 @@ section {
     z-index: 1;
 }
 
+strong {
+    font-family: 'cera round pro bold';
+}
+
 .overlay {
     background: #fff;
     height: 100%;
@@ -86,4 +90,8 @@ section {
 
 .faded {
     opacity: .3;
+}
+
+.error {
+    color: map-get($colors, "error");
 }

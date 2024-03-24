@@ -1,6 +1,6 @@
 input,
 textarea {
-    border: 1px solid map-get($colors, "neutral");
+    border: 1px solid darken(map-get($colors, "neutral"), 10%);
     border-radius: .25rem;
     padding: .25rem;
 
@@ -11,6 +11,7 @@ textarea {
 
 label {
     font-family: 'cera round pro medium';
+    width: auto;
 
     +input,
     +select,
@@ -29,4 +30,12 @@ select {
     +* {
         margin-top: .25rem;
     }
+}
+
+[type="checkbox"] {
+    cursor: pointer;
+    margin-right: .25rem;
+    position: relative;
+    top: 1px;
+    width: auto;
 }
