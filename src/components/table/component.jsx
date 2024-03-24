@@ -71,10 +71,10 @@ const Table = ({ data,
       onClick={() => sortColumn(column)}
     >
       {isSortable ? (
-        <>
+        <div>
           <span>{getColumnName(column)}</span>
           <i />
-        </>
+        </div>
       ) : (
         getColumnName(column)
       )}

@@ -95,32 +95,44 @@
         word-wrap: break-word;
     }
 
-    th {        
+    th {
         font-family: 'cera round pro bold';
         position: relative;
         z-index: 1;
         padding: 0 .5rem .75rem .5rem;
-        span {
-            font: inherit;
-        }
 
-        &.ascending,
-        &.descending {
-            i:after {
-                font-family: 'Font Awesome 6 Free';
-                font-weight: 900;
+        div {
+            display: flex;
+
+            i {
+                margin: 0 0 0 .5rem;
+                position: relative;
+                // width: 20%;
+                &:after {
+                    font-family: 'Font Awesome 6 Free';
+                    font-weight: 900;
+                    height: 100%;
+                    position: absolute;
+                    top: calc(50% - 3px);
+                }
             }
         }
 
+        span {
+            font-family: 'cera round pro medium';            
+            // width: 80%;
+        }        
+
         &.ascending {
             i:after {
-                content: "\f0de";                
+                content: "\f0de";
             }
         }
 
         &.descending {
             i:after {
                 content: "\f0dd";
+                top: calc(50% - 11px);
             }
         }
 
