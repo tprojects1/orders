@@ -11,6 +11,7 @@ textarea {
 
 label {
     font-family: 'cera round pro medium';
+    width: auto;
 
     +input,
     +select,
@@ -29,4 +30,12 @@ select {
     +* {
         margin-top: .25rem;
     }
+}
+
+[type="checkbox"] {
+    cursor: pointer;
+    margin-right: .25rem;
+    position: relative;
+    top: 1px;
+    width: auto;
 }

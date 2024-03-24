@@ -17,6 +17,6 @@
         background: #00cd3a;
     }
     &.declined {
-        background: #ff0000;
+        background: map-get($colors, "error");
     }    
 }

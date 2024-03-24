@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // import parse from 'date-fns/parse';
 import { formattedString, getTheCurrentBreakpoint } from '../../common';
 import './styles.scss';
 import { DataPanel, Tag } from '..';
+import Fuse from 'fuse.js';
 // import useDeepCompare from '../../hooks/useDeepCompare';
 
 const Table = ({ data,
@@ -20,13 +21,44 @@ const Table = ({ data,
     [sortField, setSortField] = useState(defaultSortColumn || null), // Track currently sorted field
     [sortOrder, setSortOrder] = useState(defaultSortOrder || 'descending'), // Initial sort order (descending on load)
     [searchTerm, setSearchTerm] = useState(''),
+    [showExactMatches, setShowExactMatches] = useState(false),
+    fuse = new Fuse(allData, {
+      keys: Object.keys(allData[0]), // Adjust keys if needed
+      threshold: 0.4, // Adjust for misspelling tolerance
+    }),
     handleSearchChange = (event) => {
       setSearchTerm(event.target.value.toLowerCase());
     },
-    filteredData = allData.filter((row) => {
-      // Implement search logic as needed
-      return Object.values(row).some((value) => value.toString().toLowerCase().includes(searchTerm));
-    }),
+    handleExactMatchToggle = (event) => {
+      setShowExactMatches(event.target.checked);
+    },
+    filterData = function (searchTerm, exactMatchOnly) {
+
+      if (searchTerm === '') {
+        return allData; // Return all of the data if there isn't anything in the search
+      } else {
+
+        const searchTermLower = searchTerm.toLowerCase();
+
+        return allData.filter((row) => {
+          if (exactMatchOnly) {
+            // Exact match logic (existing function)
+            return Object.values(row).some((value) =>
+              value.toString().toLowerCase().includes(searchTermLower)
+            );
+          } else {
+            // Fuzzy match using Fuse.js
+            const results = fuse.search(searchTermLower);
+            return results.map((result) => result.item).includes(row);
+          }
+        });
+      }
+    },
+    clearSearch = () => {
+      setSearchTerm(''); // Reset the search term to clear the search results
+    };
+
+  const filteredData = filterData(searchTerm, showExactMatches),
     sortColumn = (column) => {
       const sortedAllData = [...allData].sort((a, b) => {
 
@@ -200,7 +232,13 @@ const Table = ({ data,
     <>
       <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''}`}>
         <div id="search">
-          <input type="text" placeholder="Search" onChange={handleSearchChange} />
+          <div>
+            <input type="search" placeholder="Search" value={searchTerm} onChange={handleSearchChange} />
+          </div>
+          <label htmlFor="toggle-exact-matches">
+            <input type="checkbox" id="toggle-exact-matches" checked={showExactMatches} onChange={handleExactMatchToggle} />
+            Show exact matches only
+          </label>
         </div>
         <div id="table-container">
           <table key={data.length}>
@@ -210,6 +248,12 @@ const Table = ({ data,
               </tr>
             </thead>
             <tbody>
+              {/* Display no results message if filteredData is empty */}
+              {filteredData.length === 0 && searchTerm !== '' && (
+                <tr>
+                  <td colSpan={columns.length} className='no-results'><h4>No Results</h4><p>There aren't any results for the term <strong>{searchTerm}</strong>, but you can try another search term or <a href="#" onClick={clearSearch}>view all of the table entries</a>.</p></td>
+                </tr>
+              )}
               {filteredData.map((row) => (
                 <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
                   {columns.map((column) => (

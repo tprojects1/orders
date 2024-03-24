@@ -1,11 +1,28 @@
-$breakpoints: (    
+$breakpoints: (
     "medium": 768px,
     "large": 1024px,
     "extra large": 1200px
 );
 
+@function is-breakpoint-name($name) {
+    // Check if $name is a key in the $breakpoints map
+    @return map-has-key($breakpoints, $name);
+}
+
 @mixin breakpoint($breakpoint) {
-    @media (min-width: map-get($breakpoints, $breakpoint)) {
-        @content;
+    @if is-breakpoint-name($breakpoint) {
+
+        // Use the defined breakpoint from the map
+        @media (min-width: map-get($breakpoints, $breakpoint)) {
+            @content;
+        }
+    }
+
+    @else {
+
+        // Treat the argument as a custom pixel value
+        @media (min-width: #{$breakpoint}) {
+            @content;
+        }
     }
 }

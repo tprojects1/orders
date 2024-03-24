@@ -63,9 +63,17 @@
 
     #search {
         background: #fff;
+        display: flex;
+        gap: .5rem;
+        flex-direction: column;
         position: sticky;
         top: 0;
         z-index: 1;
+
+        @include breakpoint(490px) {
+            align-items: center;
+            flex-direction: row;
+        }
 
         &:after {
             background: #fff;
@@ -88,8 +96,23 @@
             top: 7px;
         }
 
-        input {
+        >div {
+            margin: 0;
             max-width: 260px;
+
+            +label {
+                cursor: pointer;
+                font: inherit;
+                font-size: .75rem;
+                margin: 0;
+
+                [type="checkbox"] {
+                    top: 2px;
+                }
+            }
+        }
+
+        [type="search"] {
             padding-left: 1.5rem;
 
             &::placeholder {
@@ -145,6 +168,16 @@
                 td {
                     padding-top: .875rem;
                     // transition: none;
+                }
+            }
+
+            .no-results {                
+                h4 {
+                    color: map-get($colors, "error");  
+                    margin-top: .5rem;       
+                    + p {
+                        margin-top: .5rem;
+                    }           
                 }
             }
         }
