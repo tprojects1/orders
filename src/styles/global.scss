@@ -95,3 +95,8 @@ strong {
 .error {
     color: map-get($colors, "error");
 }
+
+p {
+    line-height: 1.4;
+    max-width: 640px;
+}
