@@ -3,12 +3,11 @@
 
 .table {
     height: calc(100vh - 80px);
-    overflow: auto;
     // margin-top: 1rem;
+    // overflow: auto;
+    overflow: hidden;
     margin-top: -.25rem;
     width: 100%;
-
-
 
     &.sortable {
         thead {
@@ -47,7 +46,7 @@
         }
 
         td {
-            cursor: pointer;
+            cursor: pointer;            
         }
     }
 
@@ -55,6 +54,11 @@
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        height: inherit;
+        overflow: auto;
+        position: relative;
+        top: -28px;
+        // z-index: 1;
 
         @include breakpoint(medium) {
             flex-direction: row;
@@ -66,9 +70,11 @@
         display: flex;
         gap: .5rem;
         flex-direction: column;
+        margin: 0;
         position: sticky;
         top: 0;
         z-index: 1;
+        width: calc(100% - 1.5rem);
 
         @include breakpoint(490px) {
             align-items: center;
@@ -124,22 +130,24 @@
             // margin-top: .75rem;
             margin-top: 0;
 
-            thead {
+            /*thead {
                 top: 36px;
 
-            }
+            }*/
         }
     }
 
     table {
         border-collapse: collapse;
-        margin: 0 1rem 0 0;
+        height: fit-content;
+        margin: 0 1rem 0 0;       
+        table-layout: auto;         
     }
 
     thead {
         background: #fff;
         position: sticky;
-        top: 0;
+        top: 28px;
         z-index: 1;
 
         &:before {
@@ -163,10 +171,12 @@
     }
 
     tbody {
+        position: relative;
+        top: 28px;
         tr {
             &:first-child {
                 td {
-                    padding-top: .875rem;
+                    // padding-top: .875rem;
                     // transition: none;
                 }
             }
@@ -174,9 +184,9 @@
             .no-results {                
                 h4 {
                     color: map-get($colors, "error");  
-                    margin-top: .5rem;       
+                    margin-top: .75rem;       
                     + p {
-                        margin-top: .5rem;
+                        margin: .75rem 0 0 0;
                     }           
                 }
             }
@@ -195,7 +205,7 @@
         font-family: 'cera round pro bold';
         position: relative;
         z-index: 1;
-        padding: 0 .5rem .5rem .5rem;
+        padding: .5rem;
 
         div {
             display: flex;
