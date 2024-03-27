@@ -257,7 +257,7 @@ const Table = ({ data,
               {filteredData.map((row) => (
                 <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
                   {columns.map((column) => (
-                    <td key={column}>
+                    <td key={column} data-name={column}>
                       {column === 'status' ? (
                         <Tag text={row[column]} />
                       ) : (

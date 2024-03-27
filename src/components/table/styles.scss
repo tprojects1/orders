@@ -46,7 +46,7 @@
         }
 
         td {
-            cursor: pointer;            
+            cursor: pointer;
         }
     }
 
@@ -74,7 +74,7 @@
         position: sticky;
         top: 0;
         z-index: 1;
-        width: calc(100% - 1rem);
+        width: calc(100% - 1.25rem);
 
         @include breakpoint(490px) {
             align-items: center;
@@ -140,15 +140,20 @@
     table {
         border-collapse: collapse;
         height: fit-content;
-        margin: 0 1rem 0 0;       
-        table-layout: auto;         
+        margin: 0 1rem 0 0;
+        table-layout: auto;
     }
 
     thead {
         background: #fff;
+        display: none;
         position: sticky;
         top: 28px;
         z-index: 1;
+
+        @include breakpoint(medium) {
+            display: table-header-group;
+        }
 
         &:before {
             background: #fff;
@@ -171,9 +176,22 @@
     }
 
     tbody {
+        display: block;
         position: relative;
         top: 28px;
+
+        @include breakpoint(medium) {
+            display: table-row-group;
+        }
+
         tr {
+            display: flex;
+            flex-direction: column;
+
+            @include breakpoint(medium) {
+                display: table-row;
+            }
+
             &:first-child {
                 td {
                     // padding-top: .875rem;
@@ -181,13 +199,47 @@
                 }
             }
 
-            .no-results {                
+            td {
+                // display: block;                
+                margin: 0;                
+
+                &[data-name] {
+                    &:before {
+                        display: block;
+                    }
+                }
+
+                &[data-name="id"] {}
+
+                &[data-name="patient_name"] {
+                    &:before {
+                        content: 'Patient Name';
+                    }
+                }
+
+                &[data-name="doctor_name"] {
+                    &:before {
+                        content: 'Doctor Name';
+                    }
+                }
+
+                &[data-name="date"] {
+                    position: absolute;
+                    right: 0;
+                    @include breakpoint(medium) {
+                        position: static;
+                    }
+                }
+            }
+
+            .no-results {
                 h4 {
-                    color: map-get($colors, "error");  
-                    margin-top: .75rem;       
-                    + p {
+                    color: map-get($colors, "error");
+                    margin-top: .75rem;
+
+                    +p {
                         margin: .75rem 0 0 0;
-                    }           
+                    }
                 }
             }
         }
@@ -195,10 +247,13 @@
 
     th,
     td {
-        max-width: 100px;
         padding: .5rem;
         width: auto;
         word-wrap: break-word;
+
+        @include breakpoint(medium) {
+            max-width: 100px;
+        }
     }
 
     th {
