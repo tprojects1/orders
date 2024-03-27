@@ -4,13 +4,12 @@
 .data-panel {
     background: #fff;
     box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.3);
-    border-top-right-radius: .5rem;
-    border-top-left-radius: .5rem;
+    border-radius: .5rem;    
     left: 1rem;
     margin-top: 0;
     padding: 1rem;
     position: fixed;
-    top: 66px;
+    top: 62px;
     width: calc(100% - 2rem);
     z-index: 101;
 
