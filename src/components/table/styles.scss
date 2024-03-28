@@ -64,12 +64,14 @@
         gap: 1rem;
         height: inherit;
         overflow: auto;
+        overflow-x: hidden;
         position: relative;
         top: -28px;
         // z-index: 1;
 
         @include breakpoint(medium) {
             flex-direction: row;
+            overflow: auto;
         }
     }
 
@@ -139,6 +141,10 @@
         height: fit-content;
         margin: 0 1rem 0 0;
         table-layout: auto;
+        width: calc(100% - 1rem);
+        @include breakpoint(medium) {
+            width: 100%;
+        }
     }
 
     thead {
