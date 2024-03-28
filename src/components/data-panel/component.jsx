@@ -55,7 +55,7 @@ const DataPanel = (
     return (
         <div className="data-panel hidden">
             <Button action='close' onClick={onClose} />
-            <h2>Order #{selectedRow.id}</h2>
+            <h2>Edit Order #{selectedRow.id}</h2>
             <form onSubmit={(e) => e.preventDefault()}>
                 {/* Dynamically render form elements based on selectedRow data */}
                 {Object.entries(selectedRow).map(([key, value]) => (
