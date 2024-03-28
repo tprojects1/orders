@@ -244,10 +244,11 @@
 
                     @include breakpoint(medium) {
                         background: none;        
-                        border: none;                                        
+                        border: none;                                                             
                         font-family: inherit;
                         font-size: inherit;
                         height: 100%;
+                        justify-content: left;
                         position: static;
                         width: auto;
                     }                    
