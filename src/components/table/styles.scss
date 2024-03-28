@@ -31,6 +31,14 @@
                     background: lighten(map-get($colors, "primary"), 35%);
                     color: darken(map-get($colors, "primary"), 10%);
                     transition: .4s background-color ease-in-out;
+
+                    /*[data-name="id"] {
+                        background: #fff;
+                        @include breakpoint(medium) {
+                            background: none;
+                        }
+                    }*/
+
                 }
 
                 &.selected {
@@ -89,17 +97,6 @@
             left: 0;
             position: absolute;
             width: 100%;
-        }
-
-        &:before {
-            content: "\f002";
-            color: darken(map-get($colors, "neutral"), 30%);
-            font-family: 'Font Awesome 6 Free';
-            font-size: .875rem;
-            font-weight: 900;
-            left: .375rem;
-            position: absolute;
-            top: 7px;
         }
 
         >div {
@@ -187,6 +184,7 @@
         tr {
             display: flex;
             flex-direction: column;
+            position: relative;
 
             @include breakpoint(medium) {
                 display: table-row;
@@ -201,15 +199,53 @@
 
             td {
                 // display: block;                
-                margin: 0;                
+                margin: 0;
 
-                &[data-name] {
+                &[data-name] {         
+                    font-family: 'cera round pro bold';           
+                    left: 2.5rem;
+                    position: relative;
+
+                    @include breakpoint(medium) {
+                        font-family: inherit;
+                        left: 0;
+                    }
+
                     &:before {
                         display: block;
+                        font-family: 'cera round pro regular';
+                        @include breakpoint(medium) {
+                            display: none;
+                        }
                     }
                 }
 
-                &[data-name="id"] {}
+                &[data-name="id"] {
+                    align-items: center;
+                    // background: lighten(map-get($colors, "primary"), 30%);
+                    background: #fff;
+                    border: 2px solid lighten(map-get($colors, "primary"), 30%);
+                    border-radius: 100%;   
+                    display: flex;
+                    font-size: .75rem;
+                    justify-content: center;                 
+                    height: 2rem;
+                    left: .5rem;
+                    position: absolute;
+                    text-align: center;
+                    top: .75rem;
+                    width: 2rem;
+
+                    @include breakpoint(medium) {
+                        background: none;        
+                        border: none;                                        
+                        font-family: inherit;
+                        font-size: inherit;
+                        height: 100%;
+                        position: static;
+                        width: auto;
+                    }                    
+                }
 
                 &[data-name="patient_name"] {
                     &:before {
@@ -223,12 +259,30 @@
                     }
                 }
 
-                &[data-name="date"] {
+                &[data-name="patient_phone"] {
+                    &:before {
+                        content: 'Patient Phone';
+                    }
+                }
+
+                &[data-name="doctor_phone"] {
+                    &:before {
+                        content: 'Doctor Phone';
+                    }
+                }
+
+                &[data-name="date"], &[data-name="status"] {
+                    left: auto;
                     position: absolute;
                     right: 0;
+
                     @include breakpoint(medium) {
                         position: static;
                     }
+                }
+
+                &[data-name="status"] {
+                    top: 2rem;                 
                 }
             }
 

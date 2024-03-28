@@ -232,7 +232,7 @@ const Table = ({ data,
     <>
       <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''}`}>
         <div id="search">
-          <div>
+          <div class="search">
             <input type="search" placeholder="Search" value={searchTerm} onChange={handleSearchChange} />
           </div>
           <label htmlFor="toggle-exact-matches">
