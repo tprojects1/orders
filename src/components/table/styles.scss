@@ -141,9 +141,9 @@
         height: fit-content;
         margin: 0 1rem 0 0;
         table-layout: auto;
-        width: calc(100% - 1rem);
+        width: calc(100% - 1rem) !important;
         @include breakpoint(medium) {
-            width: 100%;
+            width: 100% !important;
         }
     }
 
