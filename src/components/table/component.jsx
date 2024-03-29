@@ -22,6 +22,8 @@ const Table = ({ data,
     [sortOrder, setSortOrder] = useState(defaultSortOrder || 'descending'), // Initial sort order (descending on load)
     [searchTerm, setSearchTerm] = useState(''),
     [showExactMatches, setShowExactMatches] = useState(false),
+    [currentPage, setCurrentPage] = useState(1),
+    [itemsPerPage, setItemsPerPage] = useState(10),
     fuse = new Fuse(allData, {
       keys: Object.keys(allData[0]), // Adjust keys if needed
       threshold: 0.4, // Adjust for misspelling tolerance
@@ -201,10 +203,6 @@ const Table = ({ data,
 
           // inputElement.dispatchEvent(new KeyboardEvent('keydown',{'keyCode':32,'which':32}));
 
-
-
-
-
         } catch (e) {
 
         }
@@ -228,6 +226,24 @@ const Table = ({ data,
     resizeTheTable();
   }
 
+  function goToPage(direction) {
+    switch (direction) {
+      case 'previous':
+        if (currentPage > 1) {
+          setCurrentPage(currentPage - 1);
+        }
+        break;
+      case 'next':
+        if (currentPage < totalPages) {
+          setCurrentPage(currentPage + 1);
+        }
+        break;
+    }
+  }
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage),
+    itemsPerPageOptions = [5, 10, 20];
+
   return (
     <>
       <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''}`}>
@@ -250,11 +266,17 @@ const Table = ({ data,
             <tbody>
               {/* Display no results message if filteredData is empty */}
               {filteredData.length === 0 && searchTerm !== '' && (
-                <tr>
-                  <td colSpan={columns.length} className='no-results'><h4>No Results</h4><p>There aren't any results for the term <strong>{searchTerm}</strong>, but you can try another search term or <a href="#" onClick={clearSearch}>view all of the table entries</a>.</p></td>
-                </tr>
+                filteredData.length > itemsPerPage && (
+                  <tr>
+                    <td colSpan={columns.length}>
+                      <button onClick={() => goToPage('previous')}>Previous</button>
+                      <span>Page {currentPage} of {totalPages}</span>
+                      <button onClick={() => goToPage('next')}>Next</button>
+                    </td>
+                  </tr>
+                )
               )}
-              {filteredData.map((row) => (
+              {filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((row) => (
                 <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
                   {columns.map((column) => (
                     <td key={column} data-name={column}>
@@ -269,6 +291,28 @@ const Table = ({ data,
               ))}
             </tbody>
           </table>
+          <select value={itemsPerPage} onChange={(e) => setItemsPerPage(parseInt(e.target.value))}>
+            {itemsPerPageOptions.map((option) => (
+              <option key={option} value={option}>
+                {option} per page
+              </option>
+            ))}
+          </select>
+          <ul>
+            <li>
+              <button onClick={() => goToPage('previous')} disabled={currentPage === 1}>Previous</button>
+            </li>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <li key={i + 1}>
+                <button onClick={() => setCurrentPage(i + 1)} className={currentPage === i + 1 ? 'active' : ''}>
+                  {i + 1}
+                </button>
+              </li>
+            ))}
+            <li>
+              <button onClick={() => goToPage('next')} disabled={currentPage === totalPages}>Next</button>
+            </li>
+          </ul>
           {isEditable ? (
             <DataPanel
               selectedRow={selectedRow}
