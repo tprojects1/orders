@@ -242,13 +242,69 @@ const Table = ({ data,
   }
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage),
-    itemsPerPageOptions = [5, 10, 20];
+    itemsPerPageOptions = [5, 10, 20],
+    visiblePages = 5; // Number of visible page links in a set
+
+  function goToPreviousSetOfPages() {
+    setCurrentPage(Math.max(1, currentPage - visiblePages));
+  }
+
+  function goToNextSetOfPages() {
+    setCurrentPage(Math.min(totalPages, currentPage + visiblePages));
+  }
+
+  function renderPageButtons() {
+    const visiblePages = Math.min(5, totalPages); // Ensure max 5 buttons
+    const totalPagesToShow = Math.ceil(totalPages / visiblePages);
+
+    let startIndex = Math.max(
+      1,
+      Math.min(currentPage, Math.floor((currentPage - 1) / visiblePages) * visiblePages + 1)
+    );
+
+    const endIndex = Math.min(totalPages, startIndex + visiblePages - 1),
+      buttons = [<li><button onClick={() => goToPage('previous')} disabled={currentPage === 1}>&lt;</button></li>];
+
+    for (let i = startIndex; i <= endIndex; i++) {
+      buttons.push(
+        <li key={i}>
+          <button onClick={() => setCurrentPage(i)} className={currentPage === i ? 'active' : ''}>
+            {i}
+          </button>
+        </li>
+      );
+    }
+
+    if (startIndex > 1) {
+      buttons.unshift(
+        <li key="prev">
+          <button onClick={goToPreviousSetOfPages} disabled={currentPage === 1}>
+            &lt;&lt;
+          </button>
+        </li>
+      );
+    }
+
+    buttons.push(<li><button onClick={() => goToPage('next')} disabled={currentPage === totalPages}>&gt;</button></li>)
+
+    if (endIndex < totalPages) {
+      buttons.push(
+        <li key="next">
+          <button onClick={goToNextSetOfPages} disabled={currentPage === totalPagesToShow}>
+            &gt;&gt;
+          </button>
+        </li>
+      );
+    }
+
+    return buttons;
+  }
 
   return (
     <>
       <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''}`}>
         <div id="search">
-          <div class="search">
+          <div className="search">
             <input type="search" placeholder="Search" value={searchTerm} onChange={handleSearchChange} />
           </div>
           <label htmlFor="toggle-exact-matches">
@@ -266,15 +322,9 @@ const Table = ({ data,
             <tbody>
               {/* Display no results message if filteredData is empty */}
               {filteredData.length === 0 && searchTerm !== '' && (
-                filteredData.length > itemsPerPage && (
-                  <tr>
-                    <td colSpan={columns.length}>
-                      <button onClick={() => goToPage('previous')}>Previous</button>
-                      <span>Page {currentPage} of {totalPages}</span>
-                      <button onClick={() => goToPage('next')}>Next</button>
-                    </td>
-                  </tr>
-                )
+                <tr>
+                  <td colSpan={columns.length} className='no-results'><h4>No Results</h4><p>There aren't any results for the term <strong>{searchTerm}</strong>, but you can try another search term or <a href="#" onClick={clearSearch}>view all of the table entries</a>.</p></td>
+                </tr>
               )}
               {filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((row) => (
                 <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
@@ -291,28 +341,6 @@ const Table = ({ data,
               ))}
             </tbody>
           </table>
-          <select value={itemsPerPage} onChange={(e) => setItemsPerPage(parseInt(e.target.value))}>
-            {itemsPerPageOptions.map((option) => (
-              <option key={option} value={option}>
-                {option} per page
-              </option>
-            ))}
-          </select>
-          <ul>
-            <li>
-              <button onClick={() => goToPage('previous')} disabled={currentPage === 1}>Previous</button>
-            </li>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <li key={i + 1}>
-                <button onClick={() => setCurrentPage(i + 1)} className={currentPage === i + 1 ? 'active' : ''}>
-                  {i + 1}
-                </button>
-              </li>
-            ))}
-            <li>
-              <button onClick={() => goToPage('next')} disabled={currentPage === totalPages}>Next</button>
-            </li>
-          </ul>
           {isEditable ? (
             <DataPanel
               selectedRow={selectedRow}
@@ -328,6 +356,23 @@ const Table = ({ data,
               }}
             />
           ) : ''}
+        </div>
+        <div id="page-controls">
+          <div>
+            <span>Page {currentPage} of {totalPages}</span>
+            <select value={itemsPerPage} onChange={(e) => setItemsPerPage(parseInt(e.target.value))}>
+              {itemsPerPageOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option} per page
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <ul>
+              {renderPageButtons()}
+            </ul>
+          </div>
         </div>
       </div>
     </>
