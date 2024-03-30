@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 // import parse from 'date-fns/parse';
 import { formattedString, getTheCurrentBreakpoint } from '../../common';
 import './styles.scss';
-import { DataPanel, Tag } from '..';
+import { DataPanel, PageControls, Tag } from '..';
 import Fuse from 'fuse.js';
 // import useDeepCompare from '../../hooks/useDeepCompare';
 
@@ -14,6 +14,7 @@ const Table = ({ data,
   selectedRow,
   uniqueStatuses,
   isEditable,
+  hasPageControls,
   isSortable
 }) => {
 
@@ -22,6 +23,9 @@ const Table = ({ data,
     [sortOrder, setSortOrder] = useState(defaultSortOrder || 'descending'), // Initial sort order (descending on load)
     [searchTerm, setSearchTerm] = useState(''),
     [showExactMatches, setShowExactMatches] = useState(false),
+    [currentPage, setCurrentPage] = useState(1),
+    [itemsPerPage, setItemsPerPage] = useState(10),
+    [isShowingADataPanel, setIsShowingADataPanel] = useState(false),
     fuse = new Fuse(allData, {
       keys: Object.keys(allData[0]), // Adjust keys if needed
       threshold: 0.4, // Adjust for misspelling tolerance
@@ -32,7 +36,7 @@ const Table = ({ data,
     handleExactMatchToggle = (event) => {
       setShowExactMatches(event.target.checked);
     },
-    filterData = function (searchTerm, exactMatchOnly) {
+    filterData = (searchTerm, exactMatchOnly) => {
 
       if (searchTerm === '') {
         return allData; // Return all of the data if there isn't anything in the search
@@ -98,33 +102,32 @@ const Table = ({ data,
     });
   }, []);
 
-  const getColumnName = function (column) {
+  const getColumnName = (column) => {
     return formattedString(column).replace('Id', 'ID');
-  };
-
-  const formattedColumns = columns.map((column) => (
-    <th
-      key={column}
-      className={`table-header ${sortField === column ? (sortOrder === 'ascending' ? 'descending' : 'ascending') : ''}`}
-      onClick={() => sortColumn(column)}
-    >
-      {isSortable ? (
-        <div>
-          <span>{getColumnName(column)}</span>
-          <i />
-        </div>
-      ) : (
-        getColumnName(column)
-      )}
-    </th>
-  ));
+  },
+    formattedColumns = columns.map((column) => (
+      <th
+        key={column}
+        className={`table-header ${sortField === column ? (sortOrder === 'ascending' ? 'descending' : 'ascending') : ''}`}
+        onClick={() => sortColumn(column)}
+      >
+        {isSortable ? (
+          <div>
+            <span>{getColumnName(column)}</span>
+            <i />
+          </div>
+        ) : (
+          getColumnName(column)
+        )}
+      </th>
+    ));
 
   function resizeTheTable() {
     setTimeout(() => {
       // console.log(getTheCurrentBreakpoint());
       const table = document.querySelector('table'),
-        dataPanel = document.querySelector('.data-panel'),
-        showTheDataPanel = function () {
+        dataPanel = document.querySelector('.data-panel'),        
+        showTheDataPanel = () => {
           // if (getTheCurrentBreakpoint() == 'small') document.querySelector('.overlay').classList.remove('hidden');
           if (getTheCurrentBreakpoint() == 'small') document.querySelector('table').classList.add('faded');
           setTimeout(() => {
@@ -143,9 +146,13 @@ const Table = ({ data,
         document.querySelector('table').classList.remove('faded');
         if (dataPanel) {
           table.style.width = 'calc(100% - ' + dataPanel.offsetWidth + 'px)';
+          setIsShowingADataPanel(true);
           showTheDataPanel();
         }
-        else table.style.width = '100%';
+        else {
+          table.style.width = '100%';
+          setIsShowingADataPanel(false);
+        }
       }
     });
   }
@@ -201,10 +208,6 @@ const Table = ({ data,
 
           // inputElement.dispatchEvent(new KeyboardEvent('keydown',{'keyCode':32,'which':32}));
 
-
-
-
-
         } catch (e) {
 
         }
@@ -228,11 +231,13 @@ const Table = ({ data,
     resizeTheTable();
   }
 
+
+
   return (
     <>
-      <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''}`}>
+      <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''} ${hasPageControls ? 'has-page-controls' : ''} ${isShowingADataPanel ? 'is-showing-a-data-panel' : ''}`}>
         <div id="search">
-          <div class="search">
+          <div className="search">
             <input type="search" placeholder="Search" value={searchTerm} onChange={handleSearchChange} />
           </div>
           <label htmlFor="toggle-exact-matches">
@@ -254,7 +259,7 @@ const Table = ({ data,
                   <td colSpan={columns.length} className='no-results'><h4>No Results</h4><p>There aren't any results for the term <strong>{searchTerm}</strong>, but you can try another search term or <a href="#" onClick={clearSearch}>view all of the table entries</a>.</p></td>
                 </tr>
               )}
-              {filteredData.map((row) => (
+              {filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((row) => (
                 <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
                   {columns.map((column) => (
                     <td key={column} data-name={column}>
@@ -285,6 +290,15 @@ const Table = ({ data,
             />
           ) : ''}
         </div>
+        <PageControls
+          data={filteredData}
+          visiblePageLinx={5}
+          itemsPerPageOptions={[5, 10, 20]}
+          itemsPerPage={itemsPerPage}
+          setItemsPerPage={setItemsPerPage}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
     </>
   );

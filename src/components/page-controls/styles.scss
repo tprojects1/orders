@@ -1,0 +1,82 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
+.page-controls {
+    background: #fff;
+    bottom: .5rem;
+    left: 0;
+    margin: 0;
+    min-width: $body-min-width;
+    padding: .5rem 0 0 0;
+    position: fixed;
+    width: calc(100vw - 3rem);
+
+    select {
+        margin: 0;
+        width: auto;
+
+        +span {
+            margin-left: .25rem;
+        }
+    }
+
+    >div {
+        display: flex;
+        width: fit-content;
+
+        &:first-child {
+            display: block;
+
+            * {
+                font-size: .825rem;
+            }
+
+            >span {
+                &:first-child {
+                    border-right: 1px solid darken(map-get($colors, "neutral"), 20%);
+                    margin-right: .75rem;
+                    padding-right: .75rem;
+
+                    +span {
+                        margin-right: .25rem;
+                    }
+                }
+            }
+        }
+
+        >* {
+            margin: 0;
+        }
+
+        +div {
+            margin-top: .5rem;
+            width: auto;
+        }
+
+        ul {
+            display: flex;
+            gap: .25rem;
+            list-style: none;
+            margin: 0 auto;
+            width: auto;
+
+            @include breakpoint(300px) {
+                gap: .5rem;
+            }
+
+            >* {
+                margin: 0;
+            }
+
+            li {
+                margin: 0;
+
+                button {
+                    border-radius: 100%;
+                    height: 1.5rem;
+                    width: 1.5rem;
+                }
+            }
+        }
+    }
+}
