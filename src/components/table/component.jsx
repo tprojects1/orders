@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 // import parse from 'date-fns/parse';
 import { formattedString, getTheCurrentBreakpoint } from '../../common';
 import './styles.scss';
-import { DataPanel, Tag } from '..';
+import { DataPanel, PageControls, Tag } from '..';
 import Fuse from 'fuse.js';
 // import useDeepCompare from '../../hooks/useDeepCompare';
 
@@ -14,6 +14,7 @@ const Table = ({ data,
   selectedRow,
   uniqueStatuses,
   isEditable,
+  hasPageControls,
   isSortable
 }) => {
 
@@ -34,7 +35,7 @@ const Table = ({ data,
     handleExactMatchToggle = (event) => {
       setShowExactMatches(event.target.checked);
     },
-    filterData = function (searchTerm, exactMatchOnly) {
+    filterData = (searchTerm, exactMatchOnly) => {
 
       if (searchTerm === '') {
         return allData; // Return all of the data if there isn't anything in the search
@@ -100,33 +101,32 @@ const Table = ({ data,
     });
   }, []);
 
-  const getColumnName = function (column) {
+  const getColumnName = (column) => {
     return formattedString(column).replace('Id', 'ID');
-  };
-
-  const formattedColumns = columns.map((column) => (
-    <th
-      key={column}
-      className={`table-header ${sortField === column ? (sortOrder === 'ascending' ? 'descending' : 'ascending') : ''}`}
-      onClick={() => sortColumn(column)}
-    >
-      {isSortable ? (
-        <div>
-          <span>{getColumnName(column)}</span>
-          <i />
-        </div>
-      ) : (
-        getColumnName(column)
-      )}
-    </th>
-  ));
+  },
+    formattedColumns = columns.map((column) => (
+      <th
+        key={column}
+        className={`table-header ${sortField === column ? (sortOrder === 'ascending' ? 'descending' : 'ascending') : ''}`}
+        onClick={() => sortColumn(column)}
+      >
+        {isSortable ? (
+          <div>
+            <span>{getColumnName(column)}</span>
+            <i />
+          </div>
+        ) : (
+          getColumnName(column)
+        )}
+      </th>
+    ));
 
   function resizeTheTable() {
     setTimeout(() => {
       // console.log(getTheCurrentBreakpoint());
       const table = document.querySelector('table'),
         dataPanel = document.querySelector('.data-panel'),
-        showTheDataPanel = function () {
+        showTheDataPanel = () => {
           // if (getTheCurrentBreakpoint() == 'small') document.querySelector('.overlay').classList.remove('hidden');
           if (getTheCurrentBreakpoint() == 'small') document.querySelector('table').classList.add('faded');
           setTimeout(() => {
@@ -226,83 +226,11 @@ const Table = ({ data,
     resizeTheTable();
   }
 
-  function goToPage(direction) {
-    switch (direction) {
-      case 'previous':
-        if (currentPage > 1) {
-          setCurrentPage(currentPage - 1);
-        }
-        break;
-      case 'next':
-        if (currentPage < totalPages) {
-          setCurrentPage(currentPage + 1);
-        }
-        break;
-    }
-  }
 
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage),
-    itemsPerPageOptions = [5, 10, 20],
-    visiblePages = 5; // Number of visible page links in a set
-
-  function goToPreviousSetOfPages() {
-    setCurrentPage(Math.max(1, currentPage - visiblePages));
-  }
-
-  function goToNextSetOfPages() {
-    setCurrentPage(Math.min(totalPages, currentPage + visiblePages));
-  }
-
-  function renderPageButtons() {
-    const visiblePages = Math.min(5, totalPages); // Ensure max 5 buttons
-    const totalPagesToShow = Math.ceil(totalPages / visiblePages);
-
-    let startIndex = Math.max(
-      1,
-      Math.min(currentPage, Math.floor((currentPage - 1) / visiblePages) * visiblePages + 1)
-    );
-
-    const endIndex = Math.min(totalPages, startIndex + visiblePages - 1),
-      buttons = [<li><button onClick={() => goToPage('previous')} disabled={currentPage === 1}>&lt;</button></li>];
-
-    for (let i = startIndex; i <= endIndex; i++) {
-      buttons.push(
-        <li key={i}>
-          <button onClick={() => setCurrentPage(i)} className={currentPage === i ? 'active' : ''}>
-            {i}
-          </button>
-        </li>
-      );
-    }
-
-    if (startIndex > 1) {
-      buttons.unshift(
-        <li key="prev">
-          <button onClick={goToPreviousSetOfPages} disabled={currentPage === 1}>
-            &lt;&lt;
-          </button>
-        </li>
-      );
-    }
-
-    buttons.push(<li><button onClick={() => goToPage('next')} disabled={currentPage === totalPages}>&gt;</button></li>)
-
-    if (endIndex < totalPages) {
-      buttons.push(
-        <li key="next">
-          <button onClick={goToNextSetOfPages} disabled={currentPage === totalPagesToShow}>
-            &gt;&gt;
-          </button>
-        </li>
-      );
-    }
-
-    return buttons;
-  }
 
   return (
     <>
-      <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''}`}>
+      <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''} ${hasPageControls ? 'has-page-controls' : ''}`}>
         <div id="search">
           <div className="search">
             <input type="search" placeholder="Search" value={searchTerm} onChange={handleSearchChange} />
@@ -357,23 +285,15 @@ const Table = ({ data,
             />
           ) : ''}
         </div>
-        <div id="page-controls">
-          <div>
-            <span>Page {currentPage} of {totalPages}</span>
-            <select value={itemsPerPage} onChange={(e) => setItemsPerPage(parseInt(e.target.value))}>
-              {itemsPerPageOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option} per page
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <ul>
-              {renderPageButtons()}
-            </ul>
-          </div>
-        </div>
+        <PageControls
+          data={filteredData}
+          visiblePageLinx={5}
+          itemsPerPageOptions={[5, 10, 20]}
+          itemsPerPage={itemsPerPage}
+          setItemsPerPage={setItemsPerPage}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
     </>
   );
