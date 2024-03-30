@@ -1,29 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import data from '../../data/orders.json'; // Import local JSON data for initial rendering
-import { getData } from '../../services/getData'; // Import function for fetching data (optional)
+import data from '../../data/orders.json';
+import { getData } from '../../services/getData'; // Import the service for fetching the data
 import { Header, Table, Spinner } from '../../components';
 
 const Orders = () => {
-  const [fetchedData, setFetchedData] = useState(null), // State to store fetched data
-    [error, setError] = useState(null), // State to store error, if any
+  const [fetchedData, setFetchedData] = useState(null), // State to store the fetched data
+    [error, setError] = useState(null), // State to store any errors
     [isVisible, setIsVisible] = useState(false),
     [selectedRow, setSelectedRow] = useState(null),
     [uniqueStatuses, setUniqueStatuses] = useState([]),
-    isEditable = true,
-    isSortable = true;
+    tableProperties = {
+      isEditable: true,
+      isSortable: true,
+      hasPageControls: true
+    }
 
   const handleTableDataUpdate = (updatedRow) => {
-    // Create a new object with updated values
+    // Create a new object with the updated values
     const newData = { ...updatedRow };
 
-    // Update states
+    // Update the states
     setFetchedData((prevData) => (
       prevData.map((row) => (row.id === updatedRow.id ? newData : row))
     ));
     setSelectedRow(newData);
   };
 
-  // useEffect hook for fetching data (optional)
+  // useEffect hook for fetching the data on load
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -61,13 +64,14 @@ const Orders = () => {
               handleTableDataUpdate={handleTableDataUpdate}
               setSelectedRow={setSelectedRow}
               selectedRow={selectedRow}
-              isEditable={isEditable}
-              isSortable={isSortable}
-              defaultSortColumn={'date'}              
+              isEditable={tableProperties.isEditable}
+              isSortable={tableProperties.isSortable}
+              hasPageControls={tableProperties.hasPageControls}
+              defaultSortColumn={'date'}
               columns={
                 [
                   'id',
-                  'date',                  
+                  'date',
                   'patient_name',
                   'doctor_name',
                   'patient_phone',

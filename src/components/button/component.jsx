@@ -1,12 +1,13 @@
 import React from 'react';
 import './styles.scss';
 
-const Button = ({ type, text, onClick, icon, action }) => {
+const Button = ({ children, type, text, onClick, icon, action, tier, isActive }) => {
     // Conditional rendering for classes and icon/text
     return (
         <button
-            type={type}            
-            className={`${action === 'close' ? 'close' : ''}`} // Apply 'close' class conditionally
+            type={type}
+            className={`${tier || ''} ${action || ''} ${isActive ? 'active' : ''}`}
+            tabindex={`${isActive ? -1 : 0}`}
             onClick={onClick}
         >
             {action === 'close' ? <i className={`fa-solid fa-xmark`} /> :
@@ -21,7 +22,7 @@ const Button = ({ type, text, onClick, icon, action }) => {
                 ))
 
             }
-
+            {children}
         </button>
     );
 };
