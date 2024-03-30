@@ -24,6 +24,8 @@ html {
 
 body {
     margin: 0;
+    min-width: $body-min-width;
+    overflow-x: hidden;
     // position: relative;
     text-align: left;
     /* z-index: 0;
@@ -36,7 +38,8 @@ body {
 }
 
 #root {
-    margin: 0;    
+    margin: 0;  
+    min-width: $body-min-width;      
     z-index: 0;
     @include breakpoint(medium) {
         z-index: 1;

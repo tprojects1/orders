@@ -58,11 +58,25 @@
         }
     }
 
+    &.has-page-controls {
+        #table-container {
+            // height: calc(100vh - 152px);
+        }
+    }
+
+    &.is-showing-a-data-panel {
+        @include breakpoint(medium) {
+            table {
+                margin-right: 0;
+            }
+        }        
+    }
+
     #table-container {
         display: flex;
         flex-direction: column;
         gap: 1rem;
-        height: inherit;
+        height: inherit;        
         overflow: auto;
         overflow-x: hidden;
         position: relative;
@@ -139,11 +153,13 @@
     table {
         border-collapse: collapse;
         height: fit-content;
-        margin: 0 1rem 0 0;
-        table-layout: auto;
-        width: calc(100% - 1rem) !important;
+        margin: 0 1rem 0 0;        
+        table-layout: auto;        
+        @media (max-width: 767px) {
+            width: calc(100% - 1rem) !important;
+        }
         @include breakpoint(medium) {
-            width: 100% !important;
+            // width: 100% !important;
         }
     }
 
@@ -374,5 +390,5 @@
     .tag {
         position: relative;
         top: -2px;
-    }
+    }    
 }
