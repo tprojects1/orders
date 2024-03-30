@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { formattedString, appendAnOverlayIfNecessary } from '../../common';
-import { Button } from '../../components';
+import { formattedString } from '../../common';
+import { Button } from '..';
 import './styles.scss';
 
 const DataPanel = (
@@ -54,7 +54,7 @@ const DataPanel = (
 
     return (
         <div className="data-panel hidden">
-            <Button action='close' onClick={onClose} />
+            <Button action='close' tier='secondary' onClick={onClose} />
             <h2>Edit Order #{selectedRow.id}</h2>
             <form onSubmit={(e) => e.preventDefault()}>
                 {/* Dynamically render form elements based on selectedRow data */}

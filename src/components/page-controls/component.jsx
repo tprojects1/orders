@@ -1,5 +1,6 @@
 import React from 'react';
 import './styles.scss';
+import { Button } from '..';
 
 function PageControls(
     {
@@ -40,36 +41,36 @@ function PageControls(
                 1,
                 Math.min(currentPage, Math.floor((currentPage - 1) / visiblePageLinx) * visiblePageLinx + 1)
             ), endIndex = Math.min(totalPages, startIndex + visiblePageLinx - 1),
-                buttons = [<li><button onClick={() => goToPage('previous')} disabled={currentPage === 1}>&lt;</button></li>];
+                buttons = [<li key='previousPage'><Button tier='secondary' onClick={() => goToPage('previous')} disabled={currentPage === 1}><i class="fa-solid fa-chevron-left"></i></Button></li>];
 
             for (let i = startIndex; i <= endIndex; i++) {
                 buttons.push(
                     <li key={i}>
-                        <button onClick={() => setCurrentPage(i)} className={currentPage === i ? 'active' : ''}>
+                        <Button tier='secondary' onClick={() => setCurrentPage(i)} isActive={currentPage === i}>
                             {i}
-                        </button>
+                        </Button>
                     </li>
                 );
             }
 
             if (startIndex > 1) {
                 buttons.unshift(
-                    <li key="prev">
-                        <button onClick={goToPreviousSetOfPages} disabled={currentPage === 1}>
-                            &lt;&lt;
-                        </button>
+                    <li key='previousSetOfPages'>
+                        <Button tier='secondary' onClick={goToPreviousSetOfPages} disabled={currentPage === 1}>
+                        <i class="fa-solid fa-angles-left"></i>
+                        </Button>
                     </li>
                 );
             }
 
-            buttons.push(<li><button onClick={() => goToPage('next')} disabled={currentPage === totalPages}>&gt;</button></li>)
+            buttons.push(<li key='nextPage'><Button tier='secondary' onClick={() => goToPage('next')} disabled={currentPage === totalPages}><i class="fa-solid fa-chevron-right"></i></Button></li>)
 
             if (endIndex < totalPages) {
                 buttons.push(
-                    <li key="next">
-                        <button onClick={goToNextSetOfPages} disabled={currentPage === totalPagesToShow}>
-                            &gt;&gt;
-                        </button>
+                    <li key='nextSetOfPages'>
+                        <Button tier='secondary' onClick={goToNextSetOfPages} disabled={currentPage === totalPagesToShow}>
+                            <i class="fa-solid fa-angles-right"></i>
+                        </Button>
                     </li>
                 );
             }
@@ -78,16 +79,18 @@ function PageControls(
         }
 
     return (
-        <div class="page-controls">
+        <div className="page-controls">
             <div>
-                <span>Page {currentPage} of {totalPages}</span>
+                <span>Page <strong>{currentPage}</strong> of {totalPages}</span>
+                <span>Show</span>
                 <select value={itemsPerPage} onChange={(e) => setItemsPerPage(parseInt(e.target.value))}>
                     {itemsPerPageOptions.map((option) => (
                         <option key={option} value={option}>
-                            {option} per page
+                            {option}
                         </option>
                     ))}
                 </select>
+                <span>items per page</span>
             </div>
             <div>
                 <ul>

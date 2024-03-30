@@ -25,6 +25,7 @@ const Table = ({ data,
     [showExactMatches, setShowExactMatches] = useState(false),
     [currentPage, setCurrentPage] = useState(1),
     [itemsPerPage, setItemsPerPage] = useState(10),
+    [isShowingADataPanel, setIsShowingADataPanel] = useState(false),
     fuse = new Fuse(allData, {
       keys: Object.keys(allData[0]), // Adjust keys if needed
       threshold: 0.4, // Adjust for misspelling tolerance
@@ -125,7 +126,7 @@ const Table = ({ data,
     setTimeout(() => {
       // console.log(getTheCurrentBreakpoint());
       const table = document.querySelector('table'),
-        dataPanel = document.querySelector('.data-panel'),
+        dataPanel = document.querySelector('.data-panel'),        
         showTheDataPanel = () => {
           // if (getTheCurrentBreakpoint() == 'small') document.querySelector('.overlay').classList.remove('hidden');
           if (getTheCurrentBreakpoint() == 'small') document.querySelector('table').classList.add('faded');
@@ -145,9 +146,13 @@ const Table = ({ data,
         document.querySelector('table').classList.remove('faded');
         if (dataPanel) {
           table.style.width = 'calc(100% - ' + dataPanel.offsetWidth + 'px)';
+          setIsShowingADataPanel(true);
           showTheDataPanel();
         }
-        else table.style.width = '100%';
+        else {
+          table.style.width = '100%';
+          setIsShowingADataPanel(false);
+        }
       }
     });
   }
@@ -230,7 +235,7 @@ const Table = ({ data,
 
   return (
     <>
-      <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''} ${hasPageControls ? 'has-page-controls' : ''}`}>
+      <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''} ${hasPageControls ? 'has-page-controls' : ''} ${isShowingADataPanel ? 'is-showing-a-data-panel' : ''}`}>
         <div id="search">
           <div className="search">
             <input type="search" placeholder="Search" value={searchTerm} onChange={handleSearchChange} />
