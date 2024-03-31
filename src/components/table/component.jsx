@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 // import parse from 'date-fns/parse';
-import { formattedString, getTheCurrentBreakpoint } from '../../common';
+import { formattedString, getTheCurrentBreakpoint, repositionTheDataPanel, toggleElementEnablement } from '../../common';
 import './styles.scss';
 import { DataPanel, PageControls, Tag } from '..';
 import Fuse from 'fuse.js';
@@ -24,7 +24,7 @@ const Table = ({ data,
     [searchTerm, setSearchTerm] = useState(''),
     [showExactMatches, setShowExactMatches] = useState(false),
     [currentPage, setCurrentPage] = useState(1),
-    [itemsPerPage, setItemsPerPage] = useState(10),
+    [itemsPerPage, setItemsPerPage] = useState(20),
     [isShowingADataPanel, setIsShowingADataPanel] = useState(false),
     fuse = new Fuse(allData, {
       keys: Object.keys(allData[0]), // Adjust keys if needed
@@ -129,8 +129,10 @@ const Table = ({ data,
         dataPanel = document.querySelector('.data-panel'),        
         showTheDataPanel = () => {
           // if (getTheCurrentBreakpoint() == 'small') document.querySelector('.overlay').classList.remove('hidden');
-          if (getTheCurrentBreakpoint() == 'small') document.querySelector('table').classList.add('faded');
+          // if (getTheCurrentBreakpoint() == 'small') document.querySelector('table').classList.add('faded');
+          if (getTheCurrentBreakpoint() == 'small') toggleElementEnablement(['table', 'header', '.page-controls', '#table-container', '#search'], false);
           setTimeout(() => {
+            repositionTheDataPanel();
             dataPanel.classList.remove('hidden');
           }, 400);
         }
@@ -139,11 +141,13 @@ const Table = ({ data,
         table.style.width = '100%'
         if (dataPanel) showTheDataPanel();
         // else document.querySelector('.overlay').classList.add('hidden');
-        else document.querySelector('table').classList.remove('faded');
+        // else document.querySelector('table').classList.remove('faded');
+        else toggleElementEnablement(['table', 'header', '.page-controls', '#table-container', '#search']);
       }
       else {
         // document.querySelector('.overlay').classList.add('hidden');
-        document.querySelector('table').classList.remove('faded');
+        // document.querySelector('table').classList.remove('faded');
+        toggleElementEnablement(['table', 'header', '.page-controls', '#table-container', '#search']);
         if (dataPanel) {
           table.style.width = 'calc(100% - ' + dataPanel.offsetWidth + 'px)';
           setIsShowingADataPanel(true);
@@ -231,8 +235,6 @@ const Table = ({ data,
     resizeTheTable();
   }
 
-
-
   return (
     <>
       <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''} ${hasPageControls ? 'has-page-controls' : ''} ${isShowingADataPanel ? 'is-showing-a-data-panel' : ''}`}>
@@ -293,7 +295,7 @@ const Table = ({ data,
         <PageControls
           data={filteredData}
           visiblePageLinx={5}
-          itemsPerPageOptions={[5, 10, 20]}
+          itemsPerPageOptions={[10, 20, 50]}
           itemsPerPage={itemsPerPage}
           setItemsPerPage={setItemsPerPage}
           currentPage={currentPage}

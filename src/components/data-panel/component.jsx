@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { formattedString } from '../../common';
+import { formattedString, repositionTheDataPanel } from '../../common';
 import { Button } from '..';
 import './styles.scss';
 
@@ -16,7 +16,7 @@ const DataPanel = (
 ) => {
 
     //   const [modifiedData, setModifiedData] = useState(selectedRow || {}); // Initialize with selectedRow or empty object
-    const [modifiedData, setModifiedData] = useState(selectedRow || {});
+    const [modifiedData, setModifiedData] = useState(selectedRow || {});        
 
     /*useEffect(() => {
         appendAnOverlayIfNecessary();
@@ -25,7 +25,12 @@ const DataPanel = (
     useEffect(() => {
         setTimeout(() => {
             document.querySelector('.save')?.querySelector('button').setAttribute('disabled', 'true');
-        }, 2000);
+            repositionTheDataPanel();
+            window.addEventListener('resize', function() {
+                repositionTheDataPanel();
+            });            
+            setTimeout(repositionTheDataPanel, 1000);
+        }, 2000);        
     }, []);
 
     if (!selectedRow) return null; // Hide the panel when no row is selected

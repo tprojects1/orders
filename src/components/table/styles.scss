@@ -62,6 +62,16 @@
         #table-container {
             // height: calc(100vh - 152px);
         }
+        table {
+            &:after {
+                content: '';
+                display: block;
+                height: 118px;
+                @include breakpoint(medium) {
+                    height: 92px;
+                }
+            }
+        }
     }
 
     &.is-showing-a-data-panel {
@@ -225,7 +235,7 @@
 
                 &[data-name] {         
                     font-family: 'cera round pro bold';           
-                    left: 2.5rem;
+                    // left: 4.5rem;
                     position: relative;
 
                     @include breakpoint(medium) {
@@ -242,7 +252,7 @@
                     }
                 }
 
-                &[data-name="id"] {
+                /*&[data-name="id"] {
                     align-items: center;
                     // background: lighten(map-get($colors, "primary"), 30%);
                     background: #fff;
@@ -268,6 +278,15 @@
                         position: static;
                         width: auto;
                     }                    
+                }*/
+
+                &[data-name="id"] {
+                    display: flex;
+                    gap: .25rem;
+                    top: 3.75rem;
+                    &:before {
+                        content: 'ID:';                        
+                    }
                 }
 
                 &[data-name="patient_name"] {
@@ -294,7 +313,7 @@
                     }
                 }
 
-                &[data-name="date"], &[data-name="status"] {
+                &[data-name="id"], &[data-name="date"], &[data-name="status"] {
                     left: auto;
                     position: absolute;
                     right: 0;
@@ -302,7 +321,7 @@
                     @include breakpoint(medium) {
                         position: static;
                     }
-                }
+                }               
 
                 &[data-name="status"] {
                     top: 2rem;                 

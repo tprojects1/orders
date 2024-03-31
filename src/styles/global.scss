@@ -66,6 +66,12 @@ section {
     z-index: 1;
 }
 
+header {
+    + section {
+        z-index: 2;
+    }
+}
+
 strong {
     font-family: 'cera round pro bold';
 }
@@ -91,8 +97,18 @@ strong {
     transition: none;
 }
 
+.hidden-overflow {
+    overflow: hidden !important;
+}
+
+.hidden-overflow-breakpoint0 {
+    @media (max-width: 767px) {
+        overflow: hidden !important;
+    }        
+}
+
 .faded {
-    opacity: .3;
+    opacity: .25;
 }
 
 .error {
