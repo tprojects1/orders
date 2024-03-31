@@ -41,8 +41,14 @@ button {
         border-radius: 12px;
         height: 24px;
         position: absolute;
-        right: .25rem;
+        right: .5rem;
+        top: .5rem;
         width: 24px;
+
+        @include breakpoint(medium) {
+            right: .25rem;
+            top: 0;
+        }
 
         i {
             left: -1px;
