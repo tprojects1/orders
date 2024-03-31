@@ -12,7 +12,8 @@ select {
 
 label {
     font-family: 'cera round pro medium';
-    width: auto;
+    // width: auto;
+    width: fit-content;
 
     +input,
     +select,

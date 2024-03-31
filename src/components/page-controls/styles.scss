@@ -9,7 +9,11 @@
     min-width: $body-min-width;
     padding: .5rem 0 0 0;
     position: fixed;
-    width: calc(100vw - 3rem);
+    width: calc(100vw - 2.25rem);
+
+    > * {
+        left: 1.125rem;
+    }
 
     select {
         margin: 0;
