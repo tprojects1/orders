@@ -11,10 +11,16 @@ button {
     display: flex;
     font-family: 'cera round pro bold';
     gap: .5rem;
-    max-width: 120px;
+    // max-width: 120px;
     padding: .5rem .5rem .625rem .5rem;
+    width: fit-content;
 
-    &:hover {
+    &:disabled {
+        background: darken(map-get($colors, "neutral"), 10%);
+        cursor: not-allowed;
+    }
+
+    &:enabled:hover {
         background: darken(map-get($colors, "primary"), 10%);
     }
 
@@ -61,6 +67,10 @@ button {
         left: 0;
         position: relative;
         top: 1px;
+        width: fit-content;
+        &.fa-check {
+            left: 1px;
+        }
         &.fa-chevron-left, &.fa-chevron-right {
             font-size: .7rem;
         }
@@ -70,7 +80,7 @@ button {
     }
 
     >* {
-        left: -1rem;
+        // left: -1rem;
         position: relative;
         text-align: right;
 

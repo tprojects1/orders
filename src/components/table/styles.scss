@@ -79,6 +79,19 @@
             table {
                 margin-right: 0;
             }
+            /*#table-container {
+                &:after {
+                    background: #000;
+                    content: '';
+                    height: 100%;
+                    left: 0;
+                    opacity: .4;
+                    position: absolute;
+                    top: 0;
+                    width: 100%;
+                    z-index: 1;
+                }
+            }*/
         }        
     }
 

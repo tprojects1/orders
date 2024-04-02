@@ -13,10 +13,8 @@ const DataPanel = (
         uniqueStatuses
     }
 
-) => {
-
-    //   const [modifiedData, setModifiedData] = useState(selectedRow || {}); // Initialize with selectedRow or empty object
-    const [modifiedData, setModifiedData] = useState(selectedRow || {});        
+) => {     
+    const [modifiedData, setModifiedData] = useState(selectedRow || {}); // Initialize with selectedRow or empty object
 
     /*useEffect(() => {
         appendAnOverlayIfNecessary();
@@ -24,13 +22,12 @@ const DataPanel = (
 
     useEffect(() => {
         setTimeout(() => {
-            document.querySelector('.save')?.querySelector('button').setAttribute('disabled', 'true');
             repositionTheDataPanel();
-            window.addEventListener('resize', function() {
+            window.addEventListener('resize', function () {
                 repositionTheDataPanel();
-            });            
+            });
             setTimeout(repositionTheDataPanel, 1000);
-        }, 2000);        
+        }, 2000);
     }, []);
 
     if (!selectedRow) return null; // Hide the panel when no row is selected
@@ -39,14 +36,31 @@ const DataPanel = (
         const { name, value } = event.target;
         setModifiedData({ ...selectedRow, [name]: value }); // Still needed for tracking changes
         setSelectedRow({ ...selectedRow, [name]: value }); // Update selectedRow directly                
-        document.querySelector('.save').querySelector('button').removeAttribute('disabled');
     };
 
     const handleSave = () => {
         onSave(modifiedData); // Pass modified data to onSave on button click    
-        setTimeout(() => {
+
+        setTimeout(onClose); // async to avoid the form submission console warning
+        /*setTimeout(() => {
             onSave(modifiedData);
-        });
+            // document.querySelector('.data-panel').querySelector('.close').remove();
+        });*/
+    };
+
+
+    const handleSaveAndClose = async () => {
+
+        try {
+            await onSave(modifiedData); // Wait for data to be saved successfully            
+            setTimeout(() => {
+                onSave(modifiedData);
+            });
+            onClose(); // Close the window/dialog after successful save
+        } catch (error) {
+            // Handle errors gracefully (e.g., display an error message)
+            console.error("Error saving data:", error);
+        }
     };
 
     const editableFields = [
@@ -100,7 +114,7 @@ const DataPanel = (
                     )
                 ))}
                 <div className="save">
-                    <Button text="Save" type="submit" icon="check" onClick={handleSave} />
+                    <Button text="Save and Close" type="submit" icon="check" onClick={handleSave} />
                 </div>
             </form>
         </div>

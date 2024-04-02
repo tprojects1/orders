@@ -38,17 +38,7 @@
 
     button {
         margin-left: 0;
-        margin-right: 0;
-
-        * {
-            left: -.75rem;
-        }
-
-        @include breakpoint("extra large") {
-            * {
-                left: -1rem;
-            }
-        }
+        margin-right: 0;       
     }
 
     form {

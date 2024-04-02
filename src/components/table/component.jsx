@@ -15,7 +15,9 @@ const Table = ({ data,
   uniqueStatuses,
   isEditable,
   hasPageControls,
-  isSortable
+  isSortable,
+  isShowingADataPanel,
+  setIsShowingADataPanel
 }) => {
 
   const [allData, setAllData] = useState([...data]),
@@ -24,8 +26,7 @@ const Table = ({ data,
     [searchTerm, setSearchTerm] = useState(''),
     [showExactMatches, setShowExactMatches] = useState(false),
     [currentPage, setCurrentPage] = useState(1),
-    [itemsPerPage, setItemsPerPage] = useState(20),
-    [isShowingADataPanel, setIsShowingADataPanel] = useState(false),
+    [itemsPerPage, setItemsPerPage] = useState(20),    
     fuse = new Fuse(allData, {
       keys: Object.keys(allData[0]), // Adjust keys if needed
       threshold: 0.4, // Adjust for misspelling tolerance
@@ -126,7 +127,7 @@ const Table = ({ data,
     setTimeout(() => {
       // console.log(getTheCurrentBreakpoint());
       const table = document.querySelector('table'),
-        dataPanel = document.querySelector('.data-panel'),        
+        dataPanel = document.querySelector('.data-panel'),
         showTheDataPanel = () => {
           // if (getTheCurrentBreakpoint() == 'small') document.querySelector('.overlay').classList.remove('hidden');
           // if (getTheCurrentBreakpoint() == 'small') document.querySelector('table').classList.add('faded');
@@ -172,22 +173,22 @@ const Table = ({ data,
       document.querySelector('[data-id="' + id + '"]').classList.add('selected');
 
       setSelectedRow(row);
-      setTimeout(() => {
+      /*(setTimeout(() => {
         try {
 
-          // const inputElement = document.querySelector('.data-panel').querySelector('[type="text"]');
+          const inputElement = document.querySelector('.data-panel').querySelector('[type="text"]');
 
-          /*let currentValue = inputElement.value;
+          let currentValue = inputElement.value;
 
           currentValue += " ";
           currentValue = currentValue.slice(0, -1);
-          inputElement.value = currentValue;*/
+          inputElement.value = currentValue;
 
-          /*inputElement.focus();
-          inputElement.blur();*/
-          // console.log(inputElement)
+          inputElement.focus();
+          inputElement.blur();
+          console.log(inputElement)
 
-          /*let event = new KeyboardEvent("type", {
+          let event = new KeyboardEvent("type", {
             bubbles: true,
             cancelable: true,
             charCode: 0,
@@ -201,21 +202,29 @@ const Table = ({ data,
             location: KeyboardEvent.DOM_KEY_LOCATION_STANDARD,
           });
 
-          let enterEvent = new KeyboardEvent("keydown", {
-            key: "x",  // Key property set to "x" for the letter 'x'
-            keyCode: 88, // keyCode for 'x' is 88
-            which: 88   // which property also set to 88 for consistency
-          });
-          
-          inputElement.value += "x";
-          inputElement.dispatchEvent(enterEvent);*/
+          setTimeout(() => {
 
-          // inputElement.dispatchEvent(new KeyboardEvent('keydown',{'keyCode':32,'which':32}));
+
+
+            let enterEvent = new KeyboardEvent("keydown", {
+              key: "x",  // Key property set to "x" for the letter 'x'
+              keyCode: 88, // keyCode for 'x' is 88
+              which: 88   // which property also set to 88 for consistency
+            });
+
+            const previousInputElementValue = inputElement.value;
+
+            inputElement.value += 'x';
+            inputElement.dispatchEvent(enterEvent);
+            // inputElement.value = previousInputElementValue;
+
+            inputElement.dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': 32, 'which': 32 }));
+          });
 
         } catch (e) {
-
+          console.error(e);
         }
-      });
+      }, 1000);*/
 
     }
 

@@ -25,7 +25,8 @@ html {
 body {
     margin: 0;
     min-width: $body-min-width;
-    overflow-x: hidden;
+    // overflow-x: hidden;
+    overflow: hidden;
     // position: relative;
     text-align: left;
     /* z-index: 0;

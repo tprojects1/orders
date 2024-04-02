@@ -41,7 +41,7 @@ function PageControls(
                 1,
                 Math.min(currentPage, Math.floor((currentPage - 1) / visiblePageLinx) * visiblePageLinx + 1)
             ), endIndex = Math.min(totalPages, startIndex + visiblePageLinx - 1),
-                buttons = [<li key='previousPage'><Button tier='secondary' onClick={() => goToPage('previous')} disabled={currentPage === 1}><i class="fa-solid fa-chevron-left"></i></Button></li>];
+                buttons = [<li key='previousPage'><Button tier='secondary' onClick={() => goToPage('previous')} disabled={currentPage === 1}><i className="fa-solid fa-chevron-left"></i></Button></li>];
 
             for (let i = startIndex; i <= endIndex; i++) {
                 buttons.push(
@@ -57,19 +57,19 @@ function PageControls(
                 buttons.unshift(
                     <li key='previousSetOfPages'>
                         <Button tier='secondary' onClick={goToPreviousSetOfPages} disabled={currentPage === 1}>
-                        <i class="fa-solid fa-angles-left"></i>
+                        <i className="fa-solid fa-angles-left"></i>
                         </Button>
                     </li>
                 );
             }
 
-            buttons.push(<li key='nextPage'><Button tier='secondary' onClick={() => goToPage('next')} disabled={currentPage === totalPages}><i class="fa-solid fa-chevron-right"></i></Button></li>)
+            buttons.push(<li key='nextPage'><Button tier='secondary' onClick={() => goToPage('next')} disabled={currentPage === totalPages}><i className="fa-solid fa-chevron-right"></i></Button></li>)
 
             if (endIndex < totalPages) {
                 buttons.push(
                     <li key='nextSetOfPages'>
                         <Button tier='secondary' onClick={goToNextSetOfPages} disabled={currentPage === totalPagesToShow}>
-                            <i class="fa-solid fa-angles-right"></i>
+                            <i className="fa-solid fa-angles-right"></i>
                         </Button>
                     </li>
                 );
