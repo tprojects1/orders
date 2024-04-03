@@ -5,9 +5,13 @@ header {
     background: map-get($colors, "primary");     
     color: #fff;  
     height: 52px;    
+    opacity: 0;
     position: sticky;
     top: 0;
     z-index: 2;
+    &.isLoaded {
+        opacity: 1;
+    }
     > div {
         max-width: 1280px;
         padding: .5rem 1.5rem;

@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import data from '../../data/orders.json';
 import { getData } from '../../services/getData'; // Import the service for fetching the data
-import { Header, Table, Spinner } from '../../components';
+import { Table, Spinner } from '../../components';
+import '../styles.scss';
 
-const Orders = () => {
+const Orders = ({  
+  setHeaderText
+}) => {
   const [fetchedData, setFetchedData] = useState(null), // State to store the fetched data
     [error, setError] = useState(null), // State to store any errors
     [isVisible, setIsVisible] = useState(false),
     [selectedRow, setSelectedRow] = useState(null),
     [uniqueStatuses, setUniqueStatuses] = useState([]),
+    [isShowingADataPanel, setIsShowingADataPanel] = useState(false),
     tableProperties = {
       isEditable: true,
       isSortable: true,
@@ -28,6 +32,7 @@ const Orders = () => {
 
   // useEffect hook for fetching the data on load
   useEffect(() => {
+    setHeaderText('Orders');
     const fetchData = async () => {
       try {
         const response = await getData(data); // Assuming getData fetches data
@@ -49,15 +54,15 @@ const Orders = () => {
   }, [getData, fetchedData]);
 
   return (
-    <>
+    <section className='view'>
       <Spinner></Spinner>
 
       {error ? (
         <div>Error fetching data: {error.message}</div>
       ) : fetchedData ? (
         <>
-          <Header text="Orders"></Header>
-          <section className={isVisible ? '' : 'hidden'}>
+
+          <section className={`${isShowingADataPanel ? 'is-showing-a-data-panel' : ''} ${isVisible ? '' : 'hidden'}`}>
             <Table
               uniqueStatuses={uniqueStatuses}
               data={fetchedData}
@@ -68,6 +73,8 @@ const Orders = () => {
               isSortable={tableProperties.isSortable}
               hasPageControls={tableProperties.hasPageControls}
               defaultSortColumn={'date'}
+              isShowingADataPanel={isShowingADataPanel}
+              setIsShowingADataPanel={setIsShowingADataPanel}
               columns={
                 [
                   'id',
@@ -83,7 +90,7 @@ const Orders = () => {
         </>
       ) : ('')}
 
-    </>
+    </section>
   );
 };
 

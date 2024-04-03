@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import './styles.scss';
 
-const Button = ({ children, type, text, onClick, icon, action, tier, isActive }) => {
-    useEffect(() => {
+const Button = ({ children, type, text, onClick, icon, action, tier, isActive, isDisabled }) => {    
+    useEffect(() => {        
         // Add a keydown event listener to the document
         const handleKeyDown = (event) => {
             if (event.key === 'Escape' && action === 'close') {
@@ -22,8 +22,9 @@ const Button = ({ children, type, text, onClick, icon, action, tier, isActive })
         <button
             type={type}
             className={`${tier || ''} ${action || ''} ${isActive ? 'active' : ''}`}
-            tabindex={`${isActive ? -1 : 0}`}
+            tabIndex={`${isActive ? -1 : 0}`}
             onClick={onClick}
+            disabled={isDisabled}
         >
             {action === 'close' ? <i className={`fa-solid fa-xmark`} /> : (
                 icon ? (

@@ -1,11 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Orders } from './views';
+import { Header } from './components';
 import './styles/global.scss';
 
 const App = () => {
+  const [headerText, setHeaderText] = useState('asf');
 
   return (
-    <Orders></Orders>
+    <>
+      <Header text={headerText}></Header>
+      <Orders
+        headerText={headerText}
+        setHeaderText={setHeaderText}
+      ></Orders>
+    </>
   );
 };
 
