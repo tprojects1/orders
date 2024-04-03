@@ -298,6 +298,9 @@
                     display: flex;
                     gap: .25rem;
                     top: 3.75rem;
+                    @include breakpoint(medium) {
+                        display: table-cell;
+                    }
                     &:before {
                         content: 'ID:';                        
                     }
