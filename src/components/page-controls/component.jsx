@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './styles.scss';
 import { Button } from '..';
 
@@ -10,24 +10,25 @@ function PageControls(
         currentPage,
         setCurrentPage,
         itemsPerPage,
-        setItemsPerPage
+        setItemsPerPage,
+        containerSelector
     }
 ) {
-
-    const goToPage = (direction) => {
-        switch (direction) {
-            case 'previous':
-                if (currentPage > 1) {
-                    setCurrentPage(currentPage - 1);
-                }
-                break;
-            case 'next':
-                if (currentPage < totalPages) {
-                    setCurrentPage(currentPage + 1);
-                }
-                break;
-        }
-    },
+    const [containerWidth, setContainerWidth] = useState(null),
+        goToPage = (direction) => {
+            switch (direction) {
+                case 'previous':
+                    if (currentPage > 1) {
+                        setCurrentPage(currentPage - 1);
+                    }
+                    break;
+                case 'next':
+                    if (currentPage < totalPages) {
+                        setCurrentPage(currentPage + 1);
+                    }
+                    break;
+            }
+        },
         totalPages = Math.ceil(data?.length / itemsPerPage),
         goToPreviousSetOfPages = () => {
             setCurrentPage(Math.max(1, currentPage - visiblePageLinx));
@@ -57,7 +58,7 @@ function PageControls(
                 buttons.unshift(
                     <li key='previousSetOfPages'>
                         <Button tier='secondary' onClick={goToPreviousSetOfPages} disabled={currentPage === 1}>
-                        <i className="fa-solid fa-angles-left"></i>
+                            <i className="fa-solid fa-angles-left"></i>
                         </Button>
                     </li>
                 );
@@ -78,8 +79,30 @@ function PageControls(
             return buttons;
         }
 
+    useEffect(() => {
+        const container = document.querySelector(containerSelector);
+        setTimeout(() => {
+
+            if (container) {
+                setContainerWidth(container.clientWidth);
+                // Add event listener for when the window resize affects the width
+                window.addEventListener('resize', () => {
+                    setContainerWidth(container.clientWidth);
+                });
+            }
+
+        });
+
+        return () => {
+            // Clean up event listener on component unmount
+            window.removeEventListener('resize', () => { });
+        };
+    }, [containerSelector]);
+
+    const styles = { width: containerWidth ? `${containerWidth}px` : 'auto' };
+
     return (
-        <div className="page-controls">
+        <div className="page-controls" style={styles}>
             <div>
                 <span>Page <strong>{currentPage}</strong> of {totalPages}</span>
                 <span>Show</span>
@@ -90,7 +113,7 @@ function PageControls(
                         </option>
                     ))}
                 </select>
-                <span>items per page</span>
+                <span>records per page</span>
             </div>
             <div>
                 <ul>

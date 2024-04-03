@@ -68,7 +68,7 @@
                 display: block;
                 height: 118px;
                 @include breakpoint(medium) {
-                    height: 92px;
+                    height: 124px;
                 }
             }
         }
@@ -118,6 +118,7 @@
         gap: .5rem;
         flex-direction: column;
         margin: 0;
+        padding-bottom: .25rem;
         position: sticky;
         top: 0;
         z-index: 1;

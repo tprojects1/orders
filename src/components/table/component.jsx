@@ -26,7 +26,9 @@ const Table = ({ data,
     [searchTerm, setSearchTerm] = useState(''),
     [showExactMatches, setShowExactMatches] = useState(false),
     [currentPage, setCurrentPage] = useState(1),
-    [itemsPerPage, setItemsPerPage] = useState(20),    
+    [itemsPerPage, setItemsPerPage] = useState(20),
+    [tableContainerWidth, setTableContainerWidth] = useState(null),
+    containerSelector = '#table-container',
     fuse = new Fuse(allData, {
       keys: Object.keys(allData[0]), // Adjust keys if needed
       threshold: 0.4, // Adjust for misspelling tolerance
@@ -125,30 +127,24 @@ const Table = ({ data,
 
   function resizeTheTable() {
     setTimeout(() => {
-      // console.log(getTheCurrentBreakpoint());
       const table = document.querySelector('table'),
         dataPanel = document.querySelector('.data-panel'),
         showTheDataPanel = () => {
-          // if (getTheCurrentBreakpoint() == 'small') document.querySelector('.overlay').classList.remove('hidden');
-          // if (getTheCurrentBreakpoint() == 'small') document.querySelector('table').classList.add('faded');
-          if (getTheCurrentBreakpoint() == 'small') toggleElementEnablement(['table', 'header', '.page-controls', '#table-container', '#search'], false);
           setTimeout(() => {
             repositionTheDataPanel();
             dataPanel.classList.remove('hidden');
           }, 400);
         }
 
-      if (getTheCurrentBreakpoint() == 'small') {
+      /*if (getTheCurrentBreakpoint() == 'small') {
         table.style.width = '100%'
-        if (dataPanel) showTheDataPanel();
-        // else document.querySelector('.overlay').classList.add('hidden');
-        // else document.querySelector('table').classList.remove('faded');
-        else toggleElementEnablement(['table', 'header', '.page-controls', '#table-container', '#search']);
+        if (dataPanel) {
+          setIsShowingADataPanel(true);
+          showTheDataPanel();
+        }
+        else setIsShowingADataPanel(false);
       }
       else {
-        // document.querySelector('.overlay').classList.add('hidden');
-        // document.querySelector('table').classList.remove('faded');
-        toggleElementEnablement(['table', 'header', '.page-controls', '#table-container', '#search']);
         if (dataPanel) {
           table.style.width = 'calc(100% - ' + dataPanel.offsetWidth + 'px)';
           setIsShowingADataPanel(true);
@@ -158,7 +154,16 @@ const Table = ({ data,
           table.style.width = '100%';
           setIsShowingADataPanel(false);
         }
-      }
+      }*/
+
+      table.style.width = getTheCurrentBreakpoint() == 'small'
+        ? '100%'
+        : dataPanel ? `calc(100% - ${dataPanel.offsetWidth}px)` : '100%';
+
+      setIsShowingADataPanel(!!dataPanel); // Use double negation for boolean conversion
+      if (dataPanel) showTheDataPanel();
+
+
     });
   }
 
@@ -244,10 +249,32 @@ const Table = ({ data,
     resizeTheTable();
   }
 
+  useEffect(() => {
+    const container = document.querySelector(containerSelector);
+    setTimeout(() => {
+
+      if (container) {
+        setTableContainerWidth(container.clientWidth);
+        // Add event listener for when the window resize affects the width
+        window.addEventListener('resize', () => {
+          setTableContainerWidth(container.clientWidth);
+        });
+      }
+
+    });
+
+    return () => {
+      // Clean up event listener on component unmount
+      window.removeEventListener('resize', () => { });
+    };
+  }, [containerSelector]);
+
+  const styles = { width: tableContainerWidth ? `${tableContainerWidth}px` : 'auto' };
+
   return (
     <>
       <div className={`table ${isSortable ? 'sortable' : ''} ${isEditable ? 'editable' : ''} ${hasPageControls ? 'has-page-controls' : ''} ${isShowingADataPanel ? 'is-showing-a-data-panel' : ''}`}>
-        <div id="search">
+        <div id="search" style={styles}>
           <div className="search">
             <input type="search" placeholder="Search" value={searchTerm} onChange={handleSearchChange} />
           </div>
@@ -309,6 +336,7 @@ const Table = ({ data,
           setItemsPerPage={setItemsPerPage}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
+          containerSelector={containerSelector}
         />
       </div>
     </>

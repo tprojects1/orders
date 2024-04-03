@@ -15,16 +15,29 @@
     z-index: 101;
 
     @include breakpoint(medium) {
-        border-left: 1px solid map-get($colors, "neutral");
-        border-radius: 0;
-        box-shadow: none;
-        left: 0;
+        // border-left: 1px solid map-get($colors, "neutral");    
+        border-radius: 0;    
+        // box-shadow: none;
+        // left: 0;
+        height: 100vh;
+        left: auto;
         margin-top: 0 !important;
         max-width: 320px;
         padding: 0 1rem;
-        position: sticky;
+        // position: sticky;
+        right: 0;
         top: 0;
         width: auto;
+        &:before {
+            background: #fff;
+            content: '';
+            display: none;
+            height: 100vh;
+            margin-left: -1.25rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+        }
     }
 
     &.hidden {
@@ -42,6 +55,7 @@
     }
 
     form {
+        position: relative;
         * {
             font-size: .75rem;
         }
@@ -63,6 +77,7 @@
 
     h2 {
         margin: 0;
+        position: relative;
         width: calc(100% - 1.75rem);
         @include breakpoint(medium) {
             margin-top: .5rem;     
