@@ -47,7 +47,7 @@ function PageControls(
             for (let i = startIndex; i <= endIndex; i++) {
                 buttons.push(
                     <li key={i}>
-                        <Button tier='secondary' onClick={() => setCurrentPage(i)} isActive={currentPage === i}>
+                        <Button tier='secondary' onClick={() => setCurrentPage(i)} isActive={currentPage === i} isDisabled={currentPage === i}>
                             {i}
                         </Button>
                     </li>

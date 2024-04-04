@@ -21,8 +21,7 @@ const Button = ({ children, type, text, onClick, icon, action, tier, isActive, i
     return (
         <button
             type={type}
-            className={`${tier || ''} ${action || ''} ${isActive ? 'active' : ''}`}
-            tabIndex={`${isActive ? -1 : 0}`}
+            className={`${tier || ''} ${action || ''} ${isActive ? 'active' : ''}`}            
             onClick={onClick}
             disabled={isDisabled}
         >
