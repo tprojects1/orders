@@ -105,6 +105,8 @@ const Table = ({ data,
     });
   }, []);
 
+  const [rows, setRows] = useState([...filteredData]);
+
   const getColumnName = (column) => {
     return formattedString(column).replace('Id', 'ID');
   },
@@ -269,7 +271,27 @@ const Table = ({ data,
     };
   }, [containerSelector]);
 
-  const styles = { width: tableContainerWidth ? `${tableContainerWidth}px` : 'auto' };
+  const styles = { width: tableContainerWidth ? `${tableContainerWidth}px` : 'auto' },
+    handleRowCheckboxChange = (event, row) => {
+      const updatedRows = [...rows];
+      const rowIndex = updatedRows.findIndex((rowData) => rowData.id === row.id);
+
+      if (rowIndex !== -1) {
+        updatedRows[rowIndex] = { ...updatedRows[rowIndex], isChecked: event.target.checked };
+        setAllData(updatedRows);
+      }
+    },
+    handleSelectAllClick = (event) => {
+      const isChecked = event.target.checked;
+      setAllData(rows => rows.map(row => ({ ...row, isChecked })));
+      console.log('Updated rows:', rows);
+    };
+
+
+  useEffect(() => {
+    const allChecked = rows.every((row) => row.isChecked);
+    document.getElementById('select-all').checked = allChecked; // Set "select all" checkbox
+  }, [rows]); // Update on changes to rows state
 
   return (
     <>
@@ -287,6 +309,13 @@ const Table = ({ data,
           <table key={data.length}>
             <thead>
               <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    id="select-all"
+                    onClick={handleSelectAllClick}
+                  />
+                </th>
                 {formattedColumns}
               </tr>
             </thead>
@@ -299,6 +328,15 @@ const Table = ({ data,
               )}
               {filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((row) => (
                 <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      value={row.id} // Assuming each row has a unique id
+                      checked={row.isChecked}
+                      onChange={(event) => handleRowCheckboxChange(event, row)}
+                    // Add other necessary props for managing checked states
+                    />
+                  </td>
                   {columns.map((column) => (
                     <td key={column} data-name={column}>
                       {column === 'status' ? (
