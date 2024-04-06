@@ -96,8 +96,7 @@
     }
 
     #table-container {
-        display: flex;
-        flex-direction: column;
+        
         gap: 1rem;
         height: inherit;        
         overflow: auto;
@@ -106,9 +105,14 @@
         top: -28px;
         // z-index: 1;
 
-        @include breakpoint(medium) {
-            flex-direction: row;
-            overflow: auto;
+        
+        > div {
+            display: flex;
+            flex-direction: column;
+            @include breakpoint(medium) {
+                flex-direction: row;
+                overflow: auto;
+            }
         }
     }
 
@@ -189,7 +193,7 @@
 
     thead {
         background: #fff;
-        display: none;
+        
         position: sticky;
         top: 28px;
         z-index: 1;
@@ -215,6 +219,16 @@
             height: 1rem;
             width: calc(100% - .5rem);
             position: absolute;
+        }
+        th {
+            display: none;
+            &:first-child {
+                cursor: default;
+                display: table-cell;
+            }
+            @include breakpoint(medium) {
+                display: table-cell;
+            }
         }
     }
 

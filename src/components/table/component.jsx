@@ -28,6 +28,7 @@ const Table = ({ data,
     [currentPage, setCurrentPage] = useState(1),
     [itemsPerPage, setItemsPerPage] = useState(20),
     [tableContainerWidth, setTableContainerWidth] = useState(null),
+    [checkedCount, setCheckedCount] = useState(0),
     containerSelector = '#table-container',
     fuse = new Fuse(allData, {
       keys: Object.keys(allData[0]), // Adjust keys if needed
@@ -104,6 +105,8 @@ const Table = ({ data,
       resizeTheTable();
     });
   }, []);
+
+  const [rows, setRows] = useState([...filteredData]);
 
   const getColumnName = (column) => {
     return formattedString(column).replace('Id', 'ID');
@@ -269,7 +272,31 @@ const Table = ({ data,
     };
   }, [containerSelector]);
 
-  const styles = { width: tableContainerWidth ? `${tableContainerWidth}px` : 'auto' };
+  const styles = { width: tableContainerWidth ? `${tableContainerWidth}px` : 'auto' },
+    handleRowCheckboxChange = (event, row) => {
+      const updatedRows = [...allData], rowIndex = updatedRows.findIndex((rowData) => rowData.id === row.id);
+
+      row.isChecked = event.target.checked;
+      setCheckedCount((prevCount) =>
+        event.target.checked ? prevCount + 1 : prevCount - 1
+      );
+
+      if (rowIndex !== -1) {
+        updatedRows[rowIndex] = { ...updatedRows[rowIndex], isChecked: event.target.checked };
+        setAllData(updatedRows);
+      }
+    },
+    handleSelectAllClick = (event) => {
+      const isChecked = event.target.checked;
+      setAllData((rows) => rows.map((row) => ({ ...row, isChecked })));
+      setCheckedCount(isChecked ? rows.length : 0); // Update checkedCount
+    };
+
+
+  useEffect(() => {
+    const allChecked = rows.every((row) => row.isChecked);
+    document.getElementById('select-all').checked = allChecked; // Set "select all" checkbox
+  }, [rows]); // Update on changes to rows state
 
   return (
     <>
@@ -284,34 +311,60 @@ const Table = ({ data,
           </label>
         </div>
         <div id="table-container">
-          <table key={data.length}>
-            <thead>
-              <tr>
-                {formattedColumns}
-              </tr>
-            </thead>
-            <tbody>
-              {/* Display no results message if filteredData is empty */}
-              {filteredData.length === 0 && searchTerm !== '' && (
+          {checkedCount > 0 && (
+            <div className="batch-actions">
+              {/* Your batch actions buttons or options here */}
+              <button>Delete Selected</button>
+              {/* ... */}
+            </div>
+          )}
+          <div>
+            <table key={data.length}>
+              <thead>
                 <tr>
-                  <td colSpan={columns.length} className='no-results'><h4>No Results</h4><p>There aren't any results for the term <strong>{searchTerm}</strong>, but you can try another search term or <a href="#" onClick={clearSearch}>view all of the table entries</a>.</p></td>
+                  <th>
+                    <input
+                      type="checkbox"
+                      id="select-all"
+                      onClick={handleSelectAllClick}
+                    />
+                  </th>
+                  {formattedColumns}
                 </tr>
-              )}
-              {filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((row) => (
-                <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
-                  {columns.map((column) => (
-                    <td key={column} data-name={column}>
-                      {column === 'status' ? (
-                        <Tag text={row[column]} />
-                      ) : (
-                        row[column]
-                      )}
+              </thead>
+              <tbody>
+                {/* Display no results message if filteredData is empty */}
+                {filteredData.length === 0 && searchTerm !== '' && (
+                  <tr>
+                    <td colSpan={columns.length} className='no-results'><h4>No Results</h4><p>There aren't any results for the term <strong>{searchTerm}</strong>, but you can try another search term or <a href="#" onClick={clearSearch}>view all of the table entries</a>.</p></td>
+                  </tr>
+                )}
+                {filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((row) => (
+                  <tr key={row.id} data-id={row.id} onClick={() => handleRowClick(row, row.id)}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        value={row.id} // Assuming each row has a unique id
+                        checked={row.isChecked}
+                        onChange={(event) => handleRowCheckboxChange(event, row)}
+                        onClick={(event) => event.stopPropagation()}
+                      // Add other necessary props for managing checked states
+                      />
                     </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    {columns.map((column) => (
+                      <td key={column} data-name={column}>
+                        {column === 'status' ? (
+                          <Tag text={row[column]} />
+                        ) : (
+                          row[column]
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           {isEditable ? (
             <DataPanel
               selectedRow={selectedRow}
